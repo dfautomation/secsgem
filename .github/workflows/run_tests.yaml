@@ -19,17 +19,16 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install poetry
-        run: |
-          python -m pip install poetry
+        run: python -m pip install poetry
 
       - name: Cache Poetry virtualenv
         uses: actions/cache@v1
         id: cache
         with:
           path: ~/.virtualenvs
-          key: poetry-${{ hashFiles('**/poetry.lock') }}
+          key: poetry-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
-            poetry-${{ hashFiles('**/poetry.lock') }}
+            poetry-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Set Poetry config
         run: |
