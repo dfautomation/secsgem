@@ -42,5 +42,12 @@ jobs:
       - name: Run pytest and coverage
         run: poetry run coverage run --source=secsgem -m pytest tests secsgem
 
+      - name: Publish coverage to codeclimate
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_REPORTER_ID }}
+        with:
+          coverageCommand: poetry run coverage xml
+
       - name: Lint with prospector
         run: poetry run prospector --no-autodetect --output-format=pylint secsgem
