@@ -34,6 +34,7 @@ class VID(DataItemBase):
        - :class:`U4 <secsgem.secs.variables.U4>`
 
     **Used In Function**
+        - :class:`SecsS01F21 <secsgem.secs.functions.SecsS01F21>`
         - :class:`SecsS02F33 <secsgem.secs.functions.SecsS02F33>`
         - :class:`SecsS02F45 <secsgem.secs.functions.SecsS02F45>`
         - :class:`SecsS02F46 <secsgem.secs.functions.SecsS02F46>`

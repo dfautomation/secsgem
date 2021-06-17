@@ -21,7 +21,7 @@ import secsgem.secs
 class DataValue:
     """Data value definition."""
 
-    def __init__(self, dvid, name, value_type, use_callback=True, **kwargs):
+    def __init__(self, dvid, name, unit, value_type, use_callback=True, **kwargs):
         """
         Initialize a data value.
 
@@ -44,6 +44,7 @@ class DataValue:
         """
         self.dvid = dvid
         self.name = name
+        self.unit = unit
         self.value_type = value_type
         self.use_callback = use_callback
         self.value = 0

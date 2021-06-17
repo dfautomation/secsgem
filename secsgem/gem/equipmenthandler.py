@@ -430,6 +430,35 @@ class GemEquipmentHandler(GemHandler):
 
         return self.stream_function(1, 12)(responses)
 
+    def _on_s01f21(self, handler, packet):
+        """
+        Handle Stream 1, Function 21, DV namelist request.
+
+        :param handler: handler the message was received on
+        :type handler: :class:`secsgem.hsms.handler.HsmsHandler`
+        :param packet: complete message received
+        :type packet: :class:`secsgem.hsms.HsmsPacket`
+        """
+        del handler  # unused parameters
+
+        message = self.secs_decode(packet)
+
+        responses = []
+
+        if len(message) == 0:
+            for vid in self._data_values:
+                dv = self._data_values[vid]
+                responses.append({"VID": dv.dvid, "DVVALNAME": dv.name, "UNITS": dv.unit})
+        else:
+            for vid in message:
+                if vid not in self._data_values:
+                    responses.append({"VID": vid, "DVVALNAME": "", "UNITS": ""})
+                else:
+                    dv = self._data_values[vid]
+                    responses.append({"VID": dv.dvid, "DVVALNAME": dv.name, "UNITS": dv.unit})
+
+        return self.stream_function(1, 22)(responses)
+
     # collection events
 
     @property
