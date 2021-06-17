@@ -34,6 +34,7 @@ class CEID(DataItemBase):
        - :class:`U4 <secsgem.secs.variables.U4>`
 
     **Used In Function**
+        - :class:`SecsS01F23 <secsgem.secs.functions.SecsS01F23>`
         - :class:`SecsS02F35 <secsgem.secs.functions.SecsS02F35>`
         - :class:`SecsS02F37 <secsgem.secs.functions.SecsS02F37>`
         - :class:`SecsS06F03 <secsgem.secs.functions.SecsS06F03>`
