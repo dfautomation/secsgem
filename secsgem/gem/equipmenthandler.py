@@ -510,6 +510,35 @@ class GemEquipmentHandler(GemHandler):
                     self.send_and_waitfor_response(self.stream_function(6, 11)(
                         {"DATAID": 1, "CEID": ceid, "RPT": reports}))
 
+    def _on_s01f23(self, handler, packet):
+        """
+        Handle Stream 1, Function 23, CE namelist request.
+
+        :param handler: handler the message was received on
+        :type handler: :class:`secsgem.hsms.handler.HsmsHandler`
+        :param packet: complete message received
+        :type packet: :class:`secsgem.hsms.HsmsPacket`
+        """
+        del handler  # unused parameters
+
+        message = self.secs_decode(packet)
+
+        responses = []
+
+        if len(message) == 0:
+            for ceid in self._collection_events:
+                ce = self._collection_events[ceid]
+                responses.append([ce.ceid, ce.name, ce.data_values])
+        else:
+            for ceid in message:
+                if ceid not in self._collection_events:
+                    responses.append([ceid, "", []])
+                else:
+                    ce = self._collection_events[ceid]
+                    responses.append([ce.ceid, ce.name, ce.data_values])
+
+        return self.stream_function(1, 24)(responses)
+
     def _on_s02f33(self, handler, packet):
         """
         Handle Stream 2, Function 33, Define Report.
