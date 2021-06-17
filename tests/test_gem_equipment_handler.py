@@ -30,20 +30,22 @@ from test_connection import HsmsTestServer
 
 class TestDataValue(unittest.TestCase):
     def testConstructorWithInt(self):
-        dv = secsgem.gem.DataValue(123, "TestDataValue", secsgem.secs.variables.String, False, param1="param1", param2=2)
+        dv = secsgem.gem.DataValue(123, "TestDataValue", "TestUnit", secsgem.secs.variables.String, False, param1="param1", param2=2)
 
         self.assertEqual(dv.dvid, 123)
         self.assertEqual(dv.name, "TestDataValue")
+        self.assertEqual(dv.unit, "TestUnit")
         self.assertEqual(dv.value_type, secsgem.secs.variables.String)
         self.assertEqual(dv.use_callback, False)
         self.assertEqual(dv.param1, "param1")
         self.assertEqual(dv.param2, 2)
 
     def testConstructorWithStr(self):
-        dv = secsgem.gem.DataValue("DV123", "TestDataValue", secsgem.secs.variables.String, False, param1="param1", param2=2)
+        dv = secsgem.gem.DataValue("DV123", "TestDataValue", "TestUnit", secsgem.secs.variables.String, False, param1="param1", param2=2)
 
         self.assertEqual(dv.dvid, "DV123")
         self.assertEqual(dv.name, "TestDataValue")
+        self.assertEqual(dv.unit, "TestUnit")
         self.assertEqual(dv.value_type, secsgem.secs.variables.String)
         self.assertEqual(dv.use_callback, False)
         self.assertEqual(dv.param1, "param1")
@@ -714,7 +716,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
 
     def setupTestDataValues(self, use_callbacks=False):
         self.client.data_values.update({
-            30: secsgem.gem.DataValue(30, "sample1, numeric DV, U4", secsgem.secs.variables.U4, use_callbacks),
+            30: secsgem.gem.DataValue(30, "sample1, numeric DV, U4", "unit", secsgem.secs.variables.U4, use_callbacks),
         })
 
         self.client.data_values[30].value = 31337
