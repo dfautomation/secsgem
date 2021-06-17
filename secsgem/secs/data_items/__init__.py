@@ -45,6 +45,7 @@ from .dsid import DSID
 from .dutms import DUTMS
 from .dvname import DVNAME
 from .dvval import DVVAL
+from .dvvalname import DVVALNAME
 from .eac import EAC
 from .ecdef import ECDEF
 from .ecid import ECID
@@ -117,7 +118,7 @@ from .ydies import YDIES
 __all__ = [
     "DataItemBase", "ACKA", "ACKC5", "ACKC6", "ACKC7", "ACKC10", "ALCD", "ALED", "ALID", "ALTX", "ATTRDATA", "ATTRID",
     "ATTRRELN", "BCEQU", "BINLT", "CEED", "CEID", "COLCT", "COMMACK", "CPACK", "CPNAME", "CPVAL", "DATAID",
-    "DATALENGTH", "DATLC", "DRACK", "DSID", "DUTMS", "DVNAME", "DVVAL", "EAC", "ECDEF", "ECID", "ECMAX", "ECMIN",
+    "DATALENGTH", "DATLC", "DRACK", "DSID", "DUTMS", "DVNAME", "DVVAL", "DVVALNAME", "EAC", "ECDEF", "ECID", "ECMAX", "ECMIN",
     "ECNAME", "ECV", "EDID", "ERACK", "ERRCODE", "ERRTEXT", "EXID", "EXMESSAGE", "EXRECVRA", "EXTYPE", "FFROT",
     "FNLOC", "GRANT6", "GRNT1", "HCACK", "IDTYP", "LENGTH", "LRACK", "MAPER", "MAPFT", "MDACK", "MDLN", "MEXP",
     "MHEAD", "MID", "MLCL", "NULBC", "OBJACK", "OBJID", "OBJSPEC", "OBJTYPE", "OFLACK", "ONLACK", "ORLOC", "PPBODY",
