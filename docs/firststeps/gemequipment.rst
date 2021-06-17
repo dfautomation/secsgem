@@ -132,7 +132,7 @@ The data values for a collection event can be passed while creating the :class:`
             self.dv1 = 31337
 
             self.data_values.update({
-                30: secsgem.gem.DataValue(30, "sample1, numeric DV, SecsVarU4", secsgem.secs.variables.U4, True),
+                30: secsgem.gem.DataValue(30, "sample1, numeric DV, SecsVarU4", "unit", secsgem.secs.variables.U4, True),
             })
 
             self.collection_events.update({
