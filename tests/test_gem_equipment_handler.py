@@ -746,6 +746,57 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
             "TEST_RCMD": secsgem.gem.RemoteCommand("TEST_RCMD", "test rcmd", ["TEST_PARAMETER"], 5001),
         })
 
+    def sendCENamelistRequest(self, svs=[]):
+        system_id = self.server.get_next_system_counter()
+        self.server.simulate_packet(self.server.generate_stream_function_packet(system_id, secsgem.secs.functions.SecsS01F23(svs)))
+
+        packet = self.server.expect_packet(system_id=system_id)
+
+        self.assertIsNotNone(packet)
+        self.assertEqual(packet.header.sType, 0x00)
+        self.assertEqual(packet.header.sessionID, 0x0)
+        self.assertEqual(packet.header.stream, 1)
+        self.assertEqual(packet.header.function, 24)
+
+        return self.client.secs_decode(packet)
+
+    def testCollectionEventNameListAll(self):
+        self.setupTestCollectionEvents()
+        self.establishCommunication()
+
+        function = self.sendCENamelistRequest()
+
+        CE50 = next((x for x in function if x[0].get() == 50), None)
+
+        self.assertIsNotNone(CE50)
+        self.assertEqual(CE50[1].get(), u"test collection event")
+        self.assertEqual(CE50[2].get(), [30])
+
+    def testCollectionEventNameListLimited(self):
+        self.setupTestCollectionEvents()
+        self.establishCommunication()
+
+        function = self.sendCENamelistRequest([50])
+
+        CE50 = next((x for x in function if x[0].get() == 50), None)
+
+        self.assertIsNotNone(CE50)
+        self.assertEqual(CE50[1].get(), u"test collection event")
+        self.assertEqual(CE50[2].get(), [30])
+
+    def testCollectionEventNameListInvalid(self):
+        self.setupTestCollectionEvents()
+        self.establishCommunication()
+
+        function = self.sendCENamelistRequest([123])
+
+        CE = function[0]
+
+        self.assertIsNotNone(CE)
+        self.assertEqual(CE[0].get(), 123)
+        self.assertEqual(CE[1].get(), u"")
+        self.assertEqual(CE[2].get(), [])
+
     def sendCEDefineReport(self, dataid=100, rptid=1000, vid=[30], empty_data=False):
         if not empty_data:
             data = {"DATAID": dataid, "DATA": [{"RPTID": rptid, "VID": vid}]}
