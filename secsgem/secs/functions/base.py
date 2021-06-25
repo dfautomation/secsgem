@@ -17,7 +17,7 @@
 
 import six
 import secsgem.common
-from ..variables import functions
+from secsgem.secs.variables import functions
 
 
 class StructureDisplayingMeta(type):
