@@ -17,7 +17,7 @@
 import six
 
 
-class _CallbackCallWrapper:
+class _CallbackCallWrapper(object):
     def __init__(self, handler, name):
         self.name = name
         self.handler = handler
@@ -26,7 +26,7 @@ class _CallbackCallWrapper:
         return self.handler._call(self.name, *args, **kwargs)  # noqa
 
 
-class CallbackHandler:
+class CallbackHandler(object):
     """
     Handler for callbacks for HSMS/SECS/GEM events.
 

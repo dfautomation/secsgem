@@ -25,7 +25,7 @@ import secsgem.common
 from .multi_passive_connection import HsmsMultiPassiveConnection
 
 
-class HsmsMultiPassiveServer:  # pragma: no cover
+class HsmsMultiPassiveServer(object):  # pragma: no cover
     """
     Server class for multiple passive (incoming) connection.
 

@@ -38,7 +38,7 @@ from .stream_function_header import HsmsStreamFunctionHeader
 from .connectionstatemachine import ConnectionStateMachine
 
 
-class HsmsHandler:
+class HsmsHandler(object):
     """
     Baseclass for creating Host/Equipment models.
 

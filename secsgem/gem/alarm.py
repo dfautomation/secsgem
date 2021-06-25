@@ -18,7 +18,7 @@
 import secsgem.secs
 
 
-class Alarm:
+class Alarm(object):
     """Alarm definition."""
 
     def __init__(self, alid, name, text, code, ce_on, ce_off, **kwargs):

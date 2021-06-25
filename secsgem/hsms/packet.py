@@ -20,7 +20,7 @@ import struct
 from .header import HsmsHeader
 
 
-class HsmsPacket:
+class HsmsPacket(object):
     """
     Class for hsms packet.
 

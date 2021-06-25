@@ -16,11 +16,12 @@
 #####################################################################
 
 import pytest
+import six
 
 import secsgem.common
 
 
-class TestCodecJIS8:
+class TestCodecJIS8(object):
     charMap = [
         [u"¥", b"\\"],
         [u"‾", b"~"],

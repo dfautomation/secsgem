@@ -16,7 +16,7 @@
 """Wrapper for GEM collection event link."""
 
 
-class CollectionEventLink:
+class CollectionEventLink(object):
     """Representation for registered/linked collection event."""
 
     def __init__(self, ce, reports, **kwargs):

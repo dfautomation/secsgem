@@ -18,7 +18,7 @@
 import secsgem.secs
 
 
-class CollectionEventReport:
+class CollectionEventReport(object):
     """Report definition for registered collection events."""
 
     def __init__(self, rptid, variables, **kwargs):

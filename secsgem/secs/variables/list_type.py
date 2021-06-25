@@ -16,6 +16,7 @@
 """SECS list variable type."""
 
 from collections import OrderedDict
+import six
 
 import secsgem.common
 
@@ -29,7 +30,7 @@ class List(Base):
     text_code = 'L'
     preferred_types = [dict]
 
-    class _SecsVarListIter:
+    class _SecsVarListIter(six.Iterator):
         def __init__(self, keys):
             self._keys = list(keys)
             self._counter = 0

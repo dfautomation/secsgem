@@ -23,7 +23,7 @@ from .handler import HsmsHandler
 from .multi_passive_server import HsmsMultiPassiveServer
 
 
-class HsmsConnectionManager:
+class HsmsConnectionManager(object):
     """High level class that handles multiple active and passive connections and the model for them."""
 
     def __init__(self):

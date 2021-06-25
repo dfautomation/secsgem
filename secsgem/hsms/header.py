@@ -18,7 +18,7 @@
 import struct
 
 
-class HsmsHeader:
+class HsmsHeader(object):
     """
     Generic HSMS header.
 

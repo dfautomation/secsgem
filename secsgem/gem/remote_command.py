@@ -18,7 +18,7 @@
 import secsgem.secs
 
 
-class RemoteCommand:
+class RemoteCommand(object):
     """Remote command definition."""
 
     def __init__(self, rcmd, name, params, ce_finished, **kwargs):

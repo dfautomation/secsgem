@@ -16,6 +16,7 @@
 """SECS array variable type."""
 
 import secsgem.common
+import six
 
 from .base import Base
 
@@ -27,7 +28,7 @@ class Array(Base):
     text_code = 'L'
     preferred_types = [list]
 
-    class _SecsVarArrayIter:
+    class _SecsVarArrayIter(six.Iterator):
         def __init__(self, values):
             self._values = values
             self._counter = 0
@@ -207,6 +208,8 @@ class Array(Base):
         :returns: new start position
         :rtype: integer
         """
+        from . import functions
+
         (text_pos, _, length) = self.decode_item_header(data, start)
 
         # list

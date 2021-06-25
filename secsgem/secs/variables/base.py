@@ -16,7 +16,7 @@
 """SECS variable base type."""
 
 
-class Base:
+class Base(object):
     """
     Base class for SECS variables.
 
