@@ -18,7 +18,7 @@
 import random
 import threading
 import logging
-import queue
+from six.moves import queue
 
 import secsgem.common
 

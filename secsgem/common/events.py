@@ -14,6 +14,7 @@
 # GNU Lesser General Public License for more details.
 #####################################################################
 """Contains helper functions."""
+import six
 
 
 class Event:
@@ -64,7 +65,7 @@ class Targets:
         self._targets.remove(other)
         return self
 
-    class _TargetsIter:
+    class _TargetsIter(six.Iterator):
         def __init__(self, values):
             self._values = values
             self._counter = 0

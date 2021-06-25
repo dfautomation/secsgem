@@ -15,6 +15,7 @@
 #####################################################################
 """Base class for for SECS stream and functions."""
 
+import six
 import secsgem.common
 from ..variables import functions
 
@@ -27,7 +28,8 @@ class StructureDisplayingMeta(type):
         return cls.get_format()
 
 
-class SecsStreamFunction(metaclass=StructureDisplayingMeta):
+@six.add_metaclass(StructureDisplayingMeta)
+class SecsStreamFunction():
     """
     Secs stream and function base class.
 
@@ -132,7 +134,7 @@ class SecsStreamFunction(metaclass=StructureDisplayingMeta):
     def __setattr__(self, item, value):
         """Set an item as object member."""
         if '_object_intitialized' not in self.__dict__:
-            dict.__setattr__(self, item, value)
+            self.__dict__[item] = value
             return
 
         if item in self.data.data:

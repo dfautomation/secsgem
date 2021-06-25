@@ -17,9 +17,6 @@
 
 import secsgem.common
 
-from . import list_type  # pylint: disable=cyclic-import
-from . import functions  # pylint: disable=cyclic-import
-
 from .base import Base
 
 
@@ -59,6 +56,7 @@ class Array(Base):
         :param count: number of fields in the list
         :type count: integer
         """
+        from . import list_type
         super(Array, self).__init__()
 
         self.item_decriptor = data_format
@@ -82,6 +80,8 @@ class Array(Base):
         :returns: returns the string representation of the function
         :rtype: string
         """
+        from . import list_type
+
         if showname:
             array_name = "{}: "
             if isinstance(data_format, list):
@@ -139,6 +139,8 @@ class Array(Base):
         :param value: new value
         :type value: various
         """
+        from . import functions
+
         new_object = functions.generate(self.item_decriptor)
         new_object.set(data)
         self.data.append(new_object)
@@ -150,6 +152,8 @@ class Array(Base):
         :param value: new value
         :type value: list
         """
+        from . import functions
+
         if not isinstance(value, list):
             raise ValueError("Invalid value type {} for {}".format(type(value).__name__, self.__class__.__name__))
 

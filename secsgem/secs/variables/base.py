@@ -106,6 +106,10 @@ class Base:
         return text_pos, format_code, length
 
     @property
-    def is_dynamic(self) -> bool:
-        """Check if this instance is Dynamic or derived."""
+    def is_dynamic(self):
+        """
+        Check if this instance is Dynamic or derived.
+        return: bool indicating the instance is Dynamic or derived.
+        rtype: bool
+        """
         return False

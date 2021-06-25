@@ -13,8 +13,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #####################################################################
+import six
 
-import unittest.mock
+if not six.PY2:
+    import unittest.mock
+else:
+    import unittest
+    import mock
+    unittest.mock = mock
 
 import secsgem.common
 

@@ -15,8 +15,6 @@
 # GNU Lesser General Public License for more details.
 #####################################################################
 
-from builtins import chr
-
 import pytest
 
 import secsgem.common
@@ -29,7 +27,7 @@ class TestCodecJIS8:
     ]
 
     for i in range(0x00A1, 0x00E0):
-        charMap.append([chr(i + 0xFEC0), bytes(bytearray([i]))])
+        charMap.append([six.unichr(i + 0xFEC0), bytes(bytearray([i]))])
 
     @pytest.mark.parametrize("char_map", charMap)
     def test_encode_text(self, char_map):

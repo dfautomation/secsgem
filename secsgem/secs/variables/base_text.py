@@ -16,6 +16,7 @@
 """SECS string variable base type."""
 
 import unicodedata
+import six
 
 from .base import Base
 
@@ -25,7 +26,7 @@ class BaseText(Base):
 
     format_code = -1
     text_code = u""
-    control_chars = u"".join(chr(ch) for ch in range(256) if unicodedata.category(chr(ch))[0] == "C")
+    control_chars = u"".join(six.unichr(ch) for ch in range(256) if unicodedata.category(six.unichr(ch))[0] == "C")
     coding = ""
 
     def __init__(self, value="", count=-1):

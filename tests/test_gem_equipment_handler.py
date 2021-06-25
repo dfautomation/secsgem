@@ -16,7 +16,14 @@
 
 import datetime
 import threading
-import unittest.mock
+import six
+
+if not six.PY2:
+    import unittest.mock
+else:
+    import unittest
+    import mock
+    unittest.mock = mock
 
 from dateutil.tz import tzlocal
 from dateutil.parser import parse
