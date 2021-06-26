@@ -31,7 +31,7 @@ class DataItemMeta(type):
 
 
 @six.add_metaclass(DataItemMeta)
-class DataItemBase():
+class DataItemBase(object):
     """
     Base class for data items.
 

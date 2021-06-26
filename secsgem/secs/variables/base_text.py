@@ -160,9 +160,9 @@ class BaseText(Base):
         elif isinstance(value, bytearray):
             value = bytes(value).decode(self.coding)
         elif isinstance(value, (list, tuple)):
-            value = str(bytes(bytearray(value)).decode(self.coding))
+            value = bytes(bytearray(value)).decode(self.coding)
         elif isinstance(value, (int, float, complex)):
-            value = str(value)
+            value = six.text_type(value)
         elif isinstance(value, str):
             value.encode(self.coding)  # try if it can be encoded as ascii (values 0-127)
         else:

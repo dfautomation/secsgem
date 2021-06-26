@@ -29,7 +29,7 @@ class StructureDisplayingMeta(type):
 
 
 @six.add_metaclass(StructureDisplayingMeta)
-class SecsStreamFunction():
+class SecsStreamFunction(object):
     """
     Secs stream and function base class.
 
