@@ -18,7 +18,7 @@
 import secsgem.secs
 
 
-class DataValue:
+class DataValue(object):
     """Data value definition."""
 
     def __init__(self, dvid, name, unit, value_type, use_callback=True, **kwargs):

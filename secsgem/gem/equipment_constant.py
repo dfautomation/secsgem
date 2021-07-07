@@ -18,7 +18,7 @@
 import secsgem.secs
 
 
-class EquipmentConstant:
+class EquipmentConstant(object):
     """Equipment constant definition."""
 
     def __init__(self, ecid, name, min_value, max_value, default_value, unit, value_type, use_callback=True, **kwargs):

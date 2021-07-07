@@ -44,7 +44,7 @@ class GemHandler(secsgem.secs.SecsHandler):
         :param custom_connection_handler: object for connection handling (ie multi server)
         :type custom_connection_handler: :class:`secsgem.hsms.connections.HsmsMultiPassiveServer`
         """
-        super().__init__(address, port, active, session_id, name, custom_connection_handler)
+        super(GemHandler, self).__init__(address, port, active, session_id, name, custom_connection_handler)
 
         self.MDLN = "secsgem"  #: model number returned by S01E13/14
         self.SOFTREV = "0.1.0"  #: software version returned by S01E13/14
@@ -107,7 +107,7 @@ class GemHandler(secsgem.secs.SecsHandler):
         :returns: data to serialize for this object
         :rtype: dict
         """
-        data = super()._serialize_data()
+        data = super(GemHandler, self)._serialize_data()
         data.update({'communicationState': self.communicationState.current,
                      'commDelayTimeout': self.establishCommunicationTimeout,
                      'reportIDCounter': self.reportIDCounter})
@@ -235,7 +235,7 @@ class GemHandler(secsgem.secs.SecsHandler):
         self.logger.info("Connection was closed")
 
         # call parent handlers
-        super().on_connection_closed(connection)
+        super(GemHandler, self).on_connection_closed(connection)
 
         if self.communicationState.current == "COMMUNICATING":
             # update communication state

@@ -48,7 +48,7 @@ class SecsHandler(secsgem.hsms.HsmsHandler):
         :param custom_connection_handler: object for connection handling (ie multi server)
         :type custom_connection_handler: :class:`secsgem.hsms.connections.HsmsMultiPassiveServer`
         """
-        super().__init__(address, port, active, session_id, name, custom_connection_handler)
+        super(SecsHandler, self).__init__(address, port, active, session_id, name, custom_connection_handler)
 
         self.logger = logging.getLogger(self.__module__ + "." + self.__class__.__name__)
 

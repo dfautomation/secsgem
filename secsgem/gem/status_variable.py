@@ -18,7 +18,7 @@
 import secsgem.secs
 
 
-class StatusVariable:
+class StatusVariable(object):
     """Status variable definition."""
 
     def __init__(self, svid, name, unit, value_type, use_callback=True, **kwargs):

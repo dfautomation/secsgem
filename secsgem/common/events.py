@@ -14,9 +14,10 @@
 # GNU Lesser General Public License for more details.
 #####################################################################
 """Contains helper functions."""
+import six
 
 
-class Event:
+class Event(object):
     """Class to handle the callbacks for a single event."""
 
     def __init__(self):
@@ -47,7 +48,7 @@ class Event:
         return "{}: {}".format(self.__class__.__name__, self._callbacks)
 
 
-class Targets:
+class Targets(object):
     """Class to handle a list of objects as target for events."""
 
     def __init__(self):
@@ -64,7 +65,7 @@ class Targets:
         self._targets.remove(other)
         return self
 
-    class _TargetsIter:
+    class _TargetsIter(six.Iterator):
         def __init__(self, values):
             self._values = values
             self._counter = 0
@@ -87,7 +88,7 @@ class Targets:
         return self._TargetsIter(self._targets)
 
 
-class EventProducer:
+class EventProducer(object):
     """Manages the consumers for the events and handles firing events."""
 
     def __init__(self):
@@ -142,7 +143,7 @@ class EventProducer:
         """Generate representation for an object."""
         return "{}: {}".format(self.__class__.__name__, self._events)
 
-    class _EventsIter:
+    class _EventsIter(six.Iterator):
         def __init__(self, keys):
             self._keys = list(keys)
             self._counter = 0

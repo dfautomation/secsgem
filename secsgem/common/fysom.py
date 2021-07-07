@@ -210,7 +210,7 @@ class FysomError(Exception):  # pragma: no cover
     """Fysom Error."""
 
 
-class Fysom:  # pragma: no cover
+class Fysom(object):  # pragma: no cover
     """Fysom state machine."""
 
     def __init__(self, cfg):

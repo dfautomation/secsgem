@@ -14,6 +14,7 @@
 # GNU Lesser General Public License for more details.
 #####################################################################
 """SECS dynamic variable type."""
+import six
 
 from .base import Base
 from .array import Array
@@ -79,7 +80,7 @@ class Dynamic(Base):
             return other.value == self.value.value
         if isinstance(other, list):
             return other == self.value.value
-        if isinstance(other, (bytes, str)) and isinstance(self.value.value, (bytes, str)):
+        if isinstance(other, (bytes, six.text_type)) and isinstance(self.value.value, (bytes, six.text_type)):
             return str(other) == str(self.value.value)
 
         return [other] == self.value.value
@@ -235,8 +236,12 @@ class Dynamic(Base):
         return None
 
     @property
-    def is_dynamic(self) -> bool:
-        """Check if this instance is Dynamic or derived."""
+    def is_dynamic(self):
+        """
+        Check if this instance is Dynamic or derived.
+        return: bool indicating the instance is Dynamic or derived.
+        rtype: bool
+        """
         return True
 
 

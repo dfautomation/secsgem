@@ -18,8 +18,8 @@
 import inspect
 
 from . import base
-from . import list_type  # pylint: disable=cyclic-import
-from . import array  # pylint: disable=cyclic-import
+from . import list_type
+from . import array
 
 
 def generate(data_format):

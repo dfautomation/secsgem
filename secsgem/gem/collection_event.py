@@ -18,7 +18,7 @@
 import secsgem.secs
 
 
-class CollectionEvent:
+class CollectionEvent(object):
     """Collection event definition."""
 
     def __init__(self, ceid, name, data_values, **kwargs):

@@ -76,7 +76,7 @@ class GemEquipmentHandler(GemHandler):
         "ATTEMPT_ONLINE", "HOST_OFFLINE", "ONLINE"]
         :type initial_control_state: string
         """
-        super().__init__(address, port, active, session_id, name, custom_connection_handler)
+        super(GemEquipmentHandler, self).__init__(address, port, active, session_id, name, custom_connection_handler)
 
         self.isHost = False
 
@@ -1210,7 +1210,7 @@ class GemEquipmentHandler(GemHandler):
     def on_connection_closed(self, connection):
         """Handle connection was closed event."""
         # call parent handlers
-        super().on_connection_closed(connection)
+        super(GemEquipmentHandler, self).on_connection_closed(connection)
 
         # update control state
         if self.controlState.current in ["ONLINE", "ONLINE_LOCAL", "ONLINE_REMOTE"]:

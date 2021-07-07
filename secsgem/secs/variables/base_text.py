@@ -16,6 +16,7 @@
 """SECS string variable base type."""
 
 import unicodedata
+import six
 
 from .base import Base
 
@@ -25,7 +26,7 @@ class BaseText(Base):
 
     format_code = -1
     text_code = u""
-    control_chars = u"".join(chr(ch) for ch in range(256) if unicodedata.category(chr(ch))[0] == "C")
+    control_chars = u"".join(six.unichr(ch) for ch in range(256) if unicodedata.category(six.unichr(ch))[0] == "C")
     coding = ""
 
     def __init__(self, value="", count=-1):
@@ -128,11 +129,11 @@ class BaseText(Base):
             return True
 
         if isinstance(value, (int, float, complex)):
-            if 0 < self.count < len(str(value)):
+            if 0 < self.count < len(six.text_type(value)):
                 return False
             return True
 
-        if isinstance(value, str):
+        if isinstance(value, six.text_type):
             if 0 < self.count < len(value):
                 return False
             try:
@@ -159,10 +160,10 @@ class BaseText(Base):
         elif isinstance(value, bytearray):
             value = bytes(value).decode(self.coding)
         elif isinstance(value, (list, tuple)):
-            value = str(bytes(bytearray(value)).decode(self.coding))
+            value = bytes(bytearray(value)).decode(self.coding)
         elif isinstance(value, (int, float, complex)):
-            value = str(value)
-        elif isinstance(value, str):
+            value = six.text_type(value)
+        elif isinstance(value, six.text_type):
             value.encode(self.coding)  # try if it can be encoded as ascii (values 0-127)
         else:
             raise TypeError("Unsupported type {} for {}".format(type(value).__name__, self.__class__.__name__))
@@ -170,7 +171,7 @@ class BaseText(Base):
         if 0 < self.count < len(value):
             raise ValueError("Value longer than {} chars ({} chars)".format(self.count, len(value)))
 
-        self.value = str(value)
+        self.value = six.text_type(value)
 
     def get(self):
         """

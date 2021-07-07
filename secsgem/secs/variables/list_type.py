@@ -16,12 +16,11 @@
 """SECS list variable type."""
 
 from collections import OrderedDict
+import six
 
 import secsgem.common
 
 from .base import Base
-from . import array  # pylint: disable=cyclic-import
-from . import functions  # pylint: disable=cyclic-import
 
 
 class List(Base):
@@ -31,7 +30,7 @@ class List(Base):
     text_code = 'L'
     preferred_types = [dict]
 
-    class _SecsVarListIter:
+    class _SecsVarListIter(six.Iterator):
         def __init__(self, keys):
             self._keys = list(keys)
             self._counter = 0
@@ -79,6 +78,8 @@ class List(Base):
         :returns: returns the string representation of the function
         :rtype: string
         """
+        from . import array
+
         if showname:
             array_name = "{}: ".format(List.get_name_from_format(data_format))
         else:
@@ -141,6 +142,7 @@ class List(Base):
     def _generate(self, data_format):
         if data_format is None:
             return None
+        from . import array, functions
 
         result_data = OrderedDict()
         for item in data_format:

@@ -16,6 +16,8 @@
 # pylint: disable=locally-disabled, non-parent-init-called
 """Data item base class."""
 
+import six
+
 from .. import variables
 
 
@@ -28,7 +30,8 @@ class DataItemMeta(type):
         return type.__new__(mcs, name, bases, attrs)
 
 
-class DataItemBase(metaclass=DataItemMeta):
+@six.add_metaclass(DataItemMeta)
+class DataItemBase(object):
     """
     Base class for data items.
 

@@ -40,7 +40,7 @@ HSMS_STYPES = {
 """Names for hsms header SType."""
 
 
-class HsmsConnection:  # pragma: no cover
+class HsmsConnection(object):  # pragma: no cover
     """Connection class used for active and passive hsms connections."""
 
     select_timeout = 0.5

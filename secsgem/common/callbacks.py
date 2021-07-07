@@ -14,9 +14,10 @@
 # GNU Lesser General Public License for more details.
 #####################################################################
 """Contains callback handling routines."""
+import six
 
 
-class _CallbackCallWrapper:
+class _CallbackCallWrapper(object):
     def __init__(self, handler, name):
         self.name = name
         self.handler = handler
@@ -25,7 +26,7 @@ class _CallbackCallWrapper:
         return self.handler._call(self.name, *args, **kwargs)  # noqa
 
 
-class CallbackHandler:
+class CallbackHandler(object):
     """
     Handler for callbacks for HSMS/SECS/GEM events.
 
@@ -46,7 +47,7 @@ class CallbackHandler:
         :param value: Callback
         """
         if '_object_intitialized' not in self.__dict__ or name in self.__dict__:
-            dict.__setattr__(self, name, value)
+            self.__dict__[name] = value
             return
 
         if value is None:
@@ -64,7 +65,7 @@ class CallbackHandler:
         """
         return _CallbackCallWrapper(self, name)
 
-    class _CallbacksIter:
+    class _CallbacksIter(six.Iterator):
         def __init__(self, keys):
             self._keys = list(keys)
             self._counter = 0
