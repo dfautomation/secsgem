@@ -123,7 +123,7 @@ class GemEquipmentHandler(GemHandler):
         }
 
         self._registered_reports = {}
-        self._registered_collection_events = {}
+        self._registered_collection_event_links = {}
 
         self.controlState = secsgem.common.Fysom({
             'initial': "INIT",
@@ -453,15 +453,15 @@ class GemEquipmentHandler(GemHandler):
         return self._registered_reports
 
     @property
-    def registered_collection_events(self):
+    def registered_collection_event_links(self):
         """
-        Get list of the subscribed collection events.
+        Get list of registered Collection Event Link.
 
-        :returns: Collection event list
-        :rtype: dictionary of :class:`secsgem.gem.CollectionEventLink`
+        :returns: Collection event link list
+        :rtype: list of :class:`secsgem.gem.CollectionEventLink`
 
         """
-        return self._registered_collection_events
+        return self._registered_collection_event_links.values()
 
     def trigger_collection_events(self, ceids):
         """
@@ -474,12 +474,18 @@ class GemEquipmentHandler(GemHandler):
             ceids = [ceids]
 
         for ceid in ceids:
-            if ceid in self._registered_collection_events:
-                if self._registered_collection_events[ceid].enabled:
-                    reports = self._build_collection_event(ceid)
+            if ceid not in self._collection_events:
+                self.logger.error("Invalid CEID '%s' when triggering collection event.", ceid)
+                continue
+            if not self._collection_events[ceid].enabled:
+                continue
 
-                    self.send_and_waitfor_response(self.stream_function(6, 11)(
-                        {"DATAID": 1, "CEID": ceid, "RPT": reports}))
+            reports = []
+            if ceid in self._registered_collection_event_links:
+                reports = self._build_collection_event(ceid)
+
+            self.send_and_waitfor_response(self.stream_function(6, 11)(
+                {"DATAID": 1, "CEID": ceid, "RPT": reports}))
 
     def _on_s02f33(self, handler, packet):
         """
@@ -506,34 +512,41 @@ class GemEquipmentHandler(GemHandler):
         for report in message.DATA:
             if report.RPTID in self._registered_reports and len(report.VID) > 0:
                 DRACK = 3
-            else:
-                for vid in report.VID:
-                    if (vid not in self._data_values) and (vid not in self._status_variables):
-                        DRACK = 4
+                break
+            for vid in report.VID:
+                if vid not in self._data_values and vid not in self._status_variables:
+                    DRACK = 4
+                    break
+            if DRACK != 0:
+                break
 
-        # pre check okay
-        if DRACK == 0:
-            # no data -> remove all reports and links
-            if not message.DATA:
-                self._registered_collection_events.clear()
-                self._registered_reports.clear()
-            else:
-                for report in message.DATA:
-                    # no vids -> remove this reports and links
-                    if not report.VID:
-                        # remove report from linked collection events
-                        for collection_event in list(self._registered_collection_events):
-                            if report.RPTID in self._registered_collection_events[collection_event].reports:
-                                self._registered_collection_events[collection_event].reports.remove(report.RPTID)
-                                # remove collection event link if no collection events present
-                                if not self._registered_collection_events[collection_event].reports:
-                                    del self._registered_collection_events[collection_event]
-                        # remove report
-                        if report.RPTID in self._registered_reports:
-                            del self._registered_reports[report.RPTID]
-                    else:
-                        # add report
-                        self._registered_reports[report.RPTID] = CollectionEventReport(report.RPTID, report.VID)
+        if DRACK != 0:
+            return self.stream_function(2, 34)(DRACK)
+
+        # no data -> remove all reports and links
+        if not message.DATA:
+            self._registered_collection_event_links.clear()
+            self._registered_reports.clear()
+            return self.stream_function(2, 34)(DRACK)
+
+        for report in message.DATA:
+            if report.VID:
+                # add report
+                self._registered_reports[report.RPTID] = CollectionEventReport(report.RPTID, report.VID)
+                continue
+
+            # no vids -> remove this reports and links
+            # remove report from linked collection events
+            for ceid in self._registered_collection_event_links.keys():
+                if report.RPTID in self._registered_collection_event_links[ceid].reports:
+                    self._registered_collection_event_links[ceid].reports.remove(report.RPTID)
+                    # remove collection event link if no collection events present
+                    if not self._registered_collection_event_links[ceid].reports:
+                        del self._registered_collection_event_links[ceid]
+
+            # remove report
+            if report.RPTID in self._registered_reports:
+                del self._registered_reports[report.RPTID]
 
         return self.stream_function(2, 34)(DRACK)
 
@@ -563,29 +576,37 @@ class GemEquipmentHandler(GemHandler):
         for event in message.DATA:
             if event.CEID.get() not in self._collection_events:
                 LRACK = 4
+                break
             for rptid in event.RPTID:
-                if event.CEID.get() in self._registered_collection_events:
-                    ce = self._registered_collection_events[event.CEID.get()]
+                if event.CEID.get() in self._registered_collection_event_links:
+                    ce = self._registered_collection_event_links[event.CEID.get()]
                     if rptid.get() in ce.reports:
                         LRACK = 3
+                        break
                 if rptid.get() not in self._registered_reports:
                     LRACK = 5
+                    break
+            if LRACK != 0:
+                break
 
-        # pre check okay
-        if LRACK == 0:
-            for event in message.DATA:
-                # no report ids, remove all links for collection event
-                if not event.RPTID:
-                    if event.CEID.get() in self._registered_collection_events:
-                        del self._registered_collection_events[event.CEID.get()]
-                else:
-                    if event.CEID.get() in self._registered_collection_events:
-                        ce = self._registered_collection_events[event.CEID.get()]
-                        for rptid in event.RPTID.get():
-                            ce.reports.append(rptid)
-                    else:
-                        self._registered_collection_events[event.CEID.get()] = \
-                            CollectionEventLink(self._collection_events[event.CEID.get()], event.RPTID.get())
+        if LRACK != 0:
+            return self.stream_function(2, 36)(LRACK)
+
+        for event in message.DATA:
+            # no report ids, remove all links for collection event
+            if not event.RPTID:
+                if event.CEID.get() in self._registered_collection_event_links:
+                    del self._registered_collection_event_links[event.CEID.get()]
+                continue
+
+            if event.CEID.get() not in self._registered_collection_event_links:
+                self._registered_collection_event_links[event.CEID.get()] = \
+                    CollectionEventLink(self._collection_events[event.CEID.get()], event.RPTID.get())
+                continue
+
+            ce = self._registered_collection_event_links[event.CEID.get()]
+            for rptid in event.RPTID.get():
+                ce.reports.append(rptid)
 
         return self.stream_function(2, 36)(LRACK)
 
@@ -628,10 +649,11 @@ class GemEquipmentHandler(GemHandler):
 
         reports = []
 
-        if ceid in self._registered_collection_events:
-            if self._registered_collection_events[ceid].enabled:
-                reports = self._build_collection_event(ceid)
+        # Trigger event even if it is disabled
+        if ceid in self._registered_collection_event_links:
+            reports = self._build_collection_event(ceid)
 
+        # NOTE: if user request invalid CEID for S6F15 event report request, we reply with empty report.
         return self.stream_function(6, 16)({"DATAID": 1, "CEID": ceid, "RPT": reports})
 
     def _set_ce_state(self, ceed, ceids):
@@ -647,14 +669,16 @@ class GemEquipmentHandler(GemHandler):
         """
         result = True
         if not ceids:
-            for ceid in self._registered_collection_events:
-                self._registered_collection_events[ceid].enabled = ceed
-        else:
-            for ceid in ceids:
-                if ceid in self._registered_collection_events:
-                    self._registered_collection_events[ceid].enabled = ceed
-                else:
-                    result = False
+            for ce in self._collection_events.values():
+                ce.enabled = ceed
+            return result
+
+        if not all(ceid in self._collection_events for ceid in ceids):
+            result = False
+            return result
+
+        for ceid in ceids:
+            self._collection_events[ceid].enabled = ceed
 
         return result
 
@@ -669,7 +693,7 @@ class GemEquipmentHandler(GemHandler):
         """
         reports = []
 
-        for rptid in self._registered_collection_events[ceid].reports:
+        for rptid in self._registered_collection_event_links[ceid].reports:
             report = self._registered_reports[rptid]
             variables = []
             for var in report.vars:
@@ -1113,9 +1137,9 @@ class GemEquipmentHandler(GemHandler):
         """
         enabled_ceid = []
 
-        for ceid in self._registered_collection_events:
-            if self._registered_collection_events[ceid].enabled:
-                enabled_ceid.append(ceid)
+        for collection_event in self._collection_events.values():
+            if collection_event.enabled:
+                enabled_ceid.append(collection_event.ceid)
 
         return enabled_ceid
 
