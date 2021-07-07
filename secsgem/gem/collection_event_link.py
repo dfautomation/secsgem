@@ -30,7 +30,6 @@ class CollectionEventLink(object):
         """
         self.ce = ce
         self._reports = reports
-        self.enabled = False
 
         for key, value in kwargs.items():
             setattr(self, key, value)

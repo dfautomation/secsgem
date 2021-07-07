@@ -43,6 +43,7 @@ class CollectionEvent(object):
         self.ceid = ceid
         self.name = name
         self.data_values = data_values
+        self.enabled = False
 
         if isinstance(self.ceid, int):
             self.id_type = secsgem.secs.variables.U4
