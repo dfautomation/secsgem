@@ -168,6 +168,30 @@ class GemEquipmentHandler(GemHandler):
 
         self.controlState.start()
 
+    def validate(self):
+        """
+        Get the validity of current equipment configuation.
+
+        :return: True if the configuation is valid
+        :rtype: bool
+        """
+        # check VID collision
+        vids = {}
+        vids.update(self._equipment_constants)
+        vids.update(self._status_variables)
+        vids.update(self._data_values)
+        if (len(self._equipment_constants) + len(self._status_variables) + len(self._data_values)) != len(vids):
+            self.logger.error("VID collision detected between ECID, SVID and DVID. Prevent enable command.")
+            return False
+
+        return True
+
+    def enable(self):
+        """Enable the connection."""
+        if not self.validate():
+            return
+        super(GemEquipmentHandler, self).enable()
+
     # control state model
 
     def _on_control_state_control(self, _):
