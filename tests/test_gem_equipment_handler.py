@@ -974,6 +974,19 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertEqual(len(self.client.registered_reports), oldlenRPT)
         self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE)
 
+    def testCollectionEventRegisterReportWithEquipmentConstant(self):
+        self.setupTestEquipmentConstants()
+        self.establishCommunication()
+
+        oldlen = len(self.client.registered_reports)
+
+        function = self.sendCEDefineReport(vid=[20])
+
+        self.assertIsNotNone(function.get())
+        self.assertEqual(function.get(), 0)
+
+        self.assertEqual(len(self.client.registered_reports), oldlen + 1)
+
     def testCollectionEventRegisterReportWithInvalidVID(self):
         self.establishCommunication()
 
