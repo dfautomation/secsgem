@@ -537,7 +537,7 @@ class GemEquipmentHandler(GemHandler):
 
             # no vids -> remove this reports and links
             # remove report from linked collection events
-            for ceid in self._registered_collection_event_links.keys():
+            for ceid in list(self._registered_collection_event_links):
                 if report.RPTID in self._registered_collection_event_links[ceid].reports:
                     self._registered_collection_event_links[ceid].reports.remove(report.RPTID)
                     # remove collection event link if no collection events present
