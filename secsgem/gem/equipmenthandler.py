@@ -596,7 +596,8 @@ class GemEquipmentHandler(GemHandler):
                 DRACK = 3
                 break
             for vid in report.VID:
-                if vid not in self._data_values and vid not in self._status_variables:
+                if vid not in self._data_values and vid not in self._status_variables and \
+                        vid not in self._equipment_constants:
                     DRACK = 4
                     break
             if DRACK != 0:
@@ -785,6 +786,8 @@ class GemEquipmentHandler(GemHandler):
                 elif var in self._data_values:
                     v = self._get_dv_value(self._data_values[var])
                     variables.append(v)
+                elif var in self._equipment_constants:
+                    v = self._get_ec_value(self._equipment_constants[var])
 
             reports.append({"RPTID": rptid, "V": variables})
 
