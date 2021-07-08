@@ -92,6 +92,7 @@ class TestCollectionEvent(unittest.TestCase):
         self.assertEqual(ce.data_values, [123, "DV123"])
         self.assertEqual(ce.param1, "param1")
         self.assertEqual(ce.param2, 2)
+        self.assertEqual(ce.enabled, False)
 
     def testConstructorWithStr(self):
         ce = secsgem.gem.CollectionEvent("CE123", "TestCollectionEvent", [123, "DV123"], param1="param1", param2=2)
@@ -101,6 +102,7 @@ class TestCollectionEvent(unittest.TestCase):
         self.assertEqual(ce.data_values, [123, "DV123"])
         self.assertEqual(ce.param1, "param1")
         self.assertEqual(ce.param2, 2)
+        self.assertEqual(ce.enabled, False)
 
 
 class TestCollectionEventLink(unittest.TestCase):
@@ -109,7 +111,6 @@ class TestCollectionEventLink(unittest.TestCase):
         cel = secsgem.gem.CollectionEventLink(ce, [1000], param1="param1", param2=2)
 
         self.assertEqual(cel.ce, ce)
-        self.assertEqual(cel.enabled, False)
         self.assertEqual(cel.reports, [1000])
         self.assertEqual(cel.param1, "param1")
         self.assertEqual(cel.param2, 2)
@@ -941,7 +942,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.establishCommunication()
 
         oldlenRPT = len(self.client.registered_reports)
-        oldlenCE = len(self.client.registered_collection_events)
+        oldlenCE = len(self.client.registered_collection_event_links)
 
         function = self.sendCEDefineReport()
 
@@ -955,7 +956,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertIsNotNone(function.get())
         self.assertEqual(function.get(), 0)
 
-        self.assertEqual(len(self.client.registered_collection_events), oldlenCE + 1)
+        self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE + 1)
 
         function = self.sendCEDefineReport(vid=[])
 
@@ -963,7 +964,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertEqual(function.get(), 0)
 
         self.assertEqual(len(self.client.registered_reports), oldlenRPT)
-        self.assertEqual(len(self.client.registered_collection_events), oldlenCE)
+        self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE)
 
     def testCollectionEventRegisterReportWithInvalidVID(self):
         self.establishCommunication()
@@ -993,7 +994,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.establishCommunication()
 
         oldlenRPT = len(self.client.registered_reports)
-        oldlenCE = len(self.client.registered_collection_events)
+        oldlenCE = len(self.client.registered_collection_event_links)
 
         function = self.sendCEDefineReport()
 
@@ -1007,14 +1008,14 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertIsNotNone(function.get())
         self.assertEqual(function.get(), 0)
 
-        self.assertEqual(len(self.client.registered_collection_events), oldlenCE + 1)
+        self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE + 1)
 
     def testCollectionEventLinkReportUnknownCEID(self):
         self.setupTestDataValues()
         self.establishCommunication()
 
         oldlenRPT = len(self.client.registered_reports)
-        oldlenCE = len(self.client.registered_collection_events)
+        oldlenCE = len(self.client.registered_collection_event_links)
 
         function = self.sendCEDefineReport()
 
@@ -1034,7 +1035,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.establishCommunication()
 
         oldlenRPT = len(self.client.registered_reports)
-        oldlenCE = len(self.client.registered_collection_events)
+        oldlenCE = len(self.client.registered_collection_event_links)
 
         function = self.sendCEDefineReport()
 
@@ -1048,28 +1049,28 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertIsNotNone(function.get())
         self.assertEqual(function.get(), 0)
 
-        self.assertEqual(len(self.client.registered_collection_events), oldlenCE + 1)
+        self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE + 1)
 
         function = self.sendCELinkReport()
 
         self.assertIsNotNone(function.get())
         self.assertEqual(function.get(), 3)
 
-        self.assertEqual(len(self.client.registered_collection_events), oldlenCE + 1)
+        self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE + 1)
 
     def testCollectionEventLinkReportUnknown(self):
         self.setupTestDataValues()
         self.setupTestCollectionEvents()
         self.establishCommunication()
 
-        oldlenCE = len(self.client.registered_collection_events)
+        oldlenCE = len(self.client.registered_collection_event_links)
 
         function = self.sendCELinkReport()
 
         self.assertIsNotNone(function.get())
         self.assertEqual(function.get(), 5)
 
-        self.assertEqual(len(self.client.registered_collection_events), oldlenCE)
+        self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE)
 
     def testCollectionEventUnlinkReport(self):
         self.setupTestDataValues()
@@ -1077,7 +1078,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.establishCommunication()
 
         oldlenRPT = len(self.client.registered_reports)
-        oldlenCE = len(self.client.registered_collection_events)
+        oldlenCE = len(self.client.registered_collection_event_links)
 
         function = self.sendCEDefineReport()
 
@@ -1091,14 +1092,14 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertIsNotNone(function.get())
         self.assertEqual(function.get(), 0)
 
-        self.assertEqual(len(self.client.registered_collection_events), oldlenCE + 1)
+        self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE + 1)
 
         function = self.sendCELinkReport(rptid=[])
 
         self.assertIsNotNone(function.get())
         self.assertEqual(function.get(), 0)
 
-        self.assertEqual(len(self.client.registered_collection_events), oldlenCE)
+        self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE)
 
     def testCollectionEventLinkTwoReports(self):
         self.setupTestDataValues()
@@ -1106,7 +1107,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.establishCommunication()
 
         oldlenRPT = len(self.client.registered_reports)
-        oldlenCE = len(self.client.registered_collection_events)
+        oldlenCE = len(self.client.registered_collection_event_links)
 
         function = self.sendCEDefineReport()
 
@@ -1127,14 +1128,14 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertIsNotNone(function.get())
         self.assertEqual(function.get(), 0)
 
-        self.assertEqual(len(self.client.registered_collection_events), oldlenCE + 1)
+        self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE + 1)
 
         function = self.sendCELinkReport(rptid=[1001])
 
         self.assertIsNotNone(function.get())
         self.assertEqual(function.get(), 0)
 
-        self.assertEqual(len(self.client.registered_collection_events), oldlenCE + 1)
+        self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE + 1)
 
     def testCollectionEventEnableReport(self):
         self.setupTestDataValues()
@@ -1142,7 +1143,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.establishCommunication()
 
         oldlenRPT = len(self.client.registered_reports)
-        oldlenCE = len(self.client.registered_collection_events)
+        oldlenCE = len(self.client.registered_collection_event_links)
 
         function = self.sendCEDefineReport()
 
@@ -1156,7 +1157,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertIsNotNone(function.get())
         self.assertEqual(function.get(), 0)
 
-        self.assertEqual(len(self.client.registered_collection_events), oldlenCE + 1)
+        self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE + 1)
 
         function = self.sendCEEnableReport()
 
@@ -1169,7 +1170,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.establishCommunication()
 
         oldlenRPT = len(self.client.registered_reports)
-        oldlenCE = len(self.client.registered_collection_events)
+        oldlenCE = len(self.client.registered_collection_event_links)
 
         function = self.sendCEDefineReport()
 
@@ -1183,7 +1184,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertIsNotNone(function.get())
         self.assertEqual(function.get(), 0)
 
-        self.assertEqual(len(self.client.registered_collection_events), oldlenCE + 1)
+        self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE + 1)
 
         function = self.sendCEEnableReport(ceid=[])
 
@@ -1196,7 +1197,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.establishCommunication()
 
         oldlenRPT = len(self.client.registered_reports)
-        oldlenCE = len(self.client.registered_collection_events)
+        oldlenCE = len(self.client.registered_collection_event_links)
 
         function = self.sendCEDefineReport()
 
@@ -1208,7 +1209,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         function = self.sendCEEnableReport()
 
         self.assertIsNotNone(function.get())
-        self.assertEqual(function.get(), 1)
+        self.assertEqual(function.get(), 0)
 
     def testCollectionEventRequestReport(self):
         self.setupTestDataValues()
@@ -1216,7 +1217,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.establishCommunication()
 
         oldlenRPT = len(self.client.registered_reports)
-        oldlenCE = len(self.client.registered_collection_events)
+        oldlenCE = len(self.client.registered_collection_event_links)
 
         function = self.sendCEDefineReport()
 
@@ -1230,7 +1231,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertIsNotNone(function.get())
         self.assertEqual(function.get(), 0)
 
-        self.assertEqual(len(self.client.registered_collection_events), oldlenCE + 1)
+        self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE + 1)
 
         function = self.sendCEEnableReport()
 
@@ -1251,7 +1252,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.establishCommunication()
 
         oldlenRPT = len(self.client.registered_reports)
-        oldlenCE = len(self.client.registered_collection_events)
+        oldlenCE = len(self.client.registered_collection_event_links)
 
         function = self.sendCEDefineReport(vid=[30, 10])
 
@@ -1265,7 +1266,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertIsNotNone(function.get())
         self.assertEqual(function.get(), 0)
 
-        self.assertEqual(len(self.client.registered_collection_events), oldlenCE + 1)
+        self.assertEqual(len(self.client.registered_collection_event_links), oldlenCE + 1)
 
         function = self.sendCEEnableReport()
 
