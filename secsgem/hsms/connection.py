@@ -132,6 +132,14 @@ class HsmsConnection(object):  # pragma: no cover
         # mark connection as connected
         self.connected = True
 
+        # send event
+        if self.delegate and hasattr(self.delegate, 'on_connection_established') \
+                and callable(getattr(self.delegate, 'on_connection_established')):
+            try:
+                self.delegate.on_connection_established(self)
+            except Exception:  # pylint: disable=broad-except
+                self.logger.exception('ignoring exception for on_connection_established handler')
+
         # start data receiving thread
         threading.Thread(target=self.__receiver_thread, args=(),
                          name="secsgem_hsmsConnection_receiver_{}:{}".format(self.remoteAddress,
@@ -140,14 +148,6 @@ class HsmsConnection(object):  # pragma: no cover
         # wait until thread is running
         while not self.threadRunning:
             pass
-
-        # send event
-        if self.delegate and hasattr(self.delegate, 'on_connection_established') \
-                and callable(getattr(self.delegate, 'on_connection_established')):
-            try:
-                self.delegate.on_connection_established(self)
-            except Exception:  # pylint: disable=broad-except
-                self.logger.exception('ignoring exception for on_connection_established handler')
 
     def _on_hsms_connection_close(self, data):
         pass
