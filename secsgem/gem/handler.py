@@ -25,6 +25,10 @@ import secsgem.secs
 class GemHandler(secsgem.secs.SecsHandler):
     """Baseclass for creating Host/Equipment models. This layer contains GEM functionality."""
 
+    # Configuration
+    MDLN = "secsgem"  #: model number returned by S01E13/14
+    SOFTREV = "0.1.0"  #: software version returned by S01E13/14
+
     def __init__(self, address, port, active, session_id, name, custom_connection_handler=None):
         """
         Initialize a gem handler.
@@ -45,9 +49,6 @@ class GemHandler(secsgem.secs.SecsHandler):
         :type custom_connection_handler: :class:`secsgem.hsms.connections.HsmsMultiPassiveServer`
         """
         super(GemHandler, self).__init__(address, port, active, session_id, name, custom_connection_handler)
-
-        self.MDLN = "secsgem"  #: model number returned by S01E13/14
-        self.SOFTREV = "0.1.0"  #: software version returned by S01E13/14
 
         self.logger = logging.getLogger(self.__module__ + "." + self.__class__.__name__)
 
