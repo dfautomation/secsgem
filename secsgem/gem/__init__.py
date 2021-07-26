@@ -16,12 +16,7 @@
 """module imports."""
 
 from .handler import GemHandler
-from .equipmenthandler import GemEquipmentHandler, \
-    ECID_ESTABLISH_COMMUNICATIONS_TIMEOUT, ECID_TIME_FORMAT, \
-    SVID_CLOCK, SVID_CONTROL_STATE, SVID_EVENTS_ENABLED, SVID_ALARMS_ENABLED, SVID_ALARMS_SET, \
-    CEID_EQUIPMENT_OFFLINE, CEID_CONTROL_STATE_LOCAL, CEID_CONTROL_STATE_REMOTE, CEID_CMD_START_DONE, \
-    CEID_CMD_STOP_DONE, \
-    RCMD_START, RCMD_STOP
+from .equipmenthandler import GemEquipmentHandler
 
 from .remote_command import RemoteCommand
 from .alarm import Alarm
@@ -35,11 +30,6 @@ from .hosthandler import GemHostHandler
 
 __all__ = [
     "GemHandler", "GemEquipmentHandler", "GemHostHandler",
-    "ECID_ESTABLISH_COMMUNICATIONS_TIMEOUT", "ECID_TIME_FORMAT",
-    "SVID_CLOCK", "SVID_CONTROL_STATE", "SVID_EVENTS_ENABLED", "SVID_ALARMS_ENABLED", "SVID_ALARMS_SET",
-    "CEID_EQUIPMENT_OFFLINE", "CEID_CONTROL_STATE_LOCAL", "CEID_CONTROL_STATE_REMOTE", "CEID_CMD_START_DONE",
-    "CEID_CMD_STOP_DONE",
-    "RCMD_START", "RCMD_STOP",
     "RemoteCommand", "Alarm", "EquipmentConstant", "CollectionEventReport", "CollectionEventLink",
     "CollectionEvent", "StatusVariable", "DataValue",
 ]

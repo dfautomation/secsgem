@@ -32,28 +32,28 @@ from .remote_command import RemoteCommand
 from .handler import GemHandler
 
 
-ECID_ESTABLISH_COMMUNICATIONS_TIMEOUT = 1
-ECID_TIME_FORMAT = 2
-
-SVID_CLOCK = 1001
-SVID_CONTROL_STATE = 1002
-SVID_EVENTS_ENABLED = 1003
-SVID_ALARMS_ENABLED = 1004
-SVID_ALARMS_SET = 1005
-
-CEID_EQUIPMENT_OFFLINE = 1
-CEID_CONTROL_STATE_LOCAL = 2
-CEID_CONTROL_STATE_REMOTE = 3
-
-CEID_CMD_START_DONE = 20
-CEID_CMD_STOP_DONE = 21
-
-RCMD_START = "START"
-RCMD_STOP = "STOP"
-
-
 class GemEquipmentHandler(GemHandler):
     """Baseclass for creating equipment models. Inherit from this class and override required functions."""
+
+    # Configuration
+    ECID_ESTABLISH_COMMUNICATIONS_TIMEOUT = 1
+    ECID_TIME_FORMAT = 2
+
+    SVID_CLOCK = 1001
+    SVID_CONTROL_STATE = 1002
+    SVID_EVENTS_ENABLED = 1003
+    SVID_ALARMS_ENABLED = 1004
+    SVID_ALARMS_SET = 1005
+
+    CEID_EQUIPMENT_OFFLINE = 1
+    CEID_CONTROL_STATE_LOCAL = 2
+    CEID_CONTROL_STATE_REMOTE = 3
+
+    CEID_CMD_START_DONE = 20
+    CEID_CMD_STOP_DONE = 21
+
+    RCMD_START = "START"
+    RCMD_STOP = "STOP"
 
     def __init__(self, address, port, active, session_id, name, custom_connection_handler=None,
                  initial_control_state="ATTEMPT_ONLINE", initial_online_control_state="REMOTE"):
@@ -92,34 +92,34 @@ class GemEquipmentHandler(GemHandler):
         }
 
         self._status_variables = {
-            SVID_CLOCK: StatusVariable(SVID_CLOCK, "Clock", "", secsgem.secs.variables.String),
-            SVID_CONTROL_STATE: StatusVariable(SVID_CONTROL_STATE, "ControlState", "", secsgem.secs.variables.Binary),
-            SVID_EVENTS_ENABLED: StatusVariable(SVID_EVENTS_ENABLED, "EventsEnabled", "", secsgem.secs.variables.Array),
-            SVID_ALARMS_ENABLED: StatusVariable(SVID_ALARMS_ENABLED, "AlarmsEnabled", "", secsgem.secs.variables.Array),
-            SVID_ALARMS_SET: StatusVariable(SVID_ALARMS_SET, "AlarmsSet", "", secsgem.secs.variables.Array),
+            self.SVID_CLOCK: StatusVariable(self.SVID_CLOCK, "Clock", "", secsgem.secs.variables.String),
+            self.SVID_CONTROL_STATE: StatusVariable(self.SVID_CONTROL_STATE, "ControlState", "", secsgem.secs.variables.Binary),
+            self.SVID_EVENTS_ENABLED: StatusVariable(self.SVID_EVENTS_ENABLED, "EventsEnabled", "", secsgem.secs.variables.Array),
+            self.SVID_ALARMS_ENABLED: StatusVariable(self.SVID_ALARMS_ENABLED, "AlarmsEnabled", "", secsgem.secs.variables.Array),
+            self.SVID_ALARMS_SET: StatusVariable(self.SVID_ALARMS_SET, "AlarmsSet", "", secsgem.secs.variables.Array),
         }
 
         self._collection_events = {
-            CEID_EQUIPMENT_OFFLINE: CollectionEvent(CEID_EQUIPMENT_OFFLINE, "EquipmentOffline", []),
-            CEID_CONTROL_STATE_LOCAL: CollectionEvent(CEID_CONTROL_STATE_LOCAL, "ControlStateLocal", []),
-            CEID_CONTROL_STATE_REMOTE: CollectionEvent(CEID_CONTROL_STATE_REMOTE, "ControlStateRemote", []),
-            CEID_CMD_START_DONE: CollectionEvent(CEID_CMD_START_DONE, "CmdStartDone", []),
-            CEID_CMD_STOP_DONE: CollectionEvent(CEID_CMD_STOP_DONE, "CmdStopDone", []),
+            self.CEID_EQUIPMENT_OFFLINE: CollectionEvent(self.CEID_EQUIPMENT_OFFLINE, "EquipmentOffline", []),
+            self.CEID_CONTROL_STATE_LOCAL: CollectionEvent(self.CEID_CONTROL_STATE_LOCAL, "ControlStateLocal", []),
+            self.CEID_CONTROL_STATE_REMOTE: CollectionEvent(self.CEID_CONTROL_STATE_REMOTE, "ControlStateRemote", []),
+            self.CEID_CMD_START_DONE: CollectionEvent(self.CEID_CMD_START_DONE, "CmdStartDone", []),
+            self.CEID_CMD_STOP_DONE: CollectionEvent(self.CEID_CMD_STOP_DONE, "CmdStopDone", []),
         }
 
         self._equipment_constants = {
-            ECID_ESTABLISH_COMMUNICATIONS_TIMEOUT: EquipmentConstant(ECID_ESTABLISH_COMMUNICATIONS_TIMEOUT,
+            self.ECID_ESTABLISH_COMMUNICATIONS_TIMEOUT: EquipmentConstant(self.ECID_ESTABLISH_COMMUNICATIONS_TIMEOUT,
                                                                      "EstablishCommunicationsTimeout", 10, 120, 10,
                                                                      "sec", secsgem.secs.variables.I2),
-            ECID_TIME_FORMAT: EquipmentConstant(ECID_TIME_FORMAT, "TimeFormat", 0, 2, 1, "", secsgem.secs.variables.I4),
+            self.ECID_TIME_FORMAT: EquipmentConstant(self.ECID_TIME_FORMAT, "TimeFormat", 0, 2, 1, "", secsgem.secs.variables.I4),
         }
 
         self._alarms = {
         }
 
         self._remote_commands = {
-            RCMD_START: RemoteCommand(RCMD_START, "Start", [], CEID_CMD_START_DONE),
-            RCMD_STOP: RemoteCommand(RCMD_STOP, "Stop", [], CEID_CMD_STOP_DONE),
+            self.RCMD_START: RemoteCommand(self.RCMD_START, "Start", [], self.CEID_CMD_START_DONE),
+            self.RCMD_STOP: RemoteCommand(self.RCMD_STOP, "Stop", [], self.CEID_CMD_STOP_DONE),
         }
 
         self._registered_reports = {}
@@ -208,10 +208,10 @@ class GemEquipmentHandler(GemHandler):
             self.controlState.initial_online_local()
 
     def _on_control_state_initial_online_local(self, _):
-        self.trigger_collection_events([CEID_CONTROL_STATE_LOCAL])
+        self.trigger_collection_events([self.CEID_CONTROL_STATE_LOCAL])
 
     def _on_control_state_initial_online_remote(self, _):
-        self.trigger_collection_events([CEID_CONTROL_STATE_REMOTE])
+        self.trigger_collection_events([self.CEID_CONTROL_STATE_REMOTE])
 
     def control_switch_online(self):
         """Operator switches to online control state."""
@@ -220,7 +220,7 @@ class GemEquipmentHandler(GemHandler):
     def control_switch_offline(self):
         """Operator switches to offline control state."""
         self.controlState.switch_offline()
-        self.trigger_collection_events([CEID_EQUIPMENT_OFFLINE])
+        self.trigger_collection_events([self.CEID_EQUIPMENT_OFFLINE])
 
     def control_switch_online_local(self):
         """Operator switches to the local online control state."""
@@ -247,7 +247,7 @@ class GemEquipmentHandler(GemHandler):
 
         if self.controlState.current in ["ONLINE", "ONLINE_LOCAL", "ONLINE_REMOTE"]:
             self.controlState.remote_offline()
-            self.trigger_collection_events([CEID_EQUIPMENT_OFFLINE])
+            self.trigger_collection_events([self.CEID_EQUIPMENT_OFFLINE])
 
         return self.stream_function(1, 16)(OFLACK)
 
@@ -382,17 +382,17 @@ class GemEquipmentHandler(GemHandler):
         :returns: The value encoded in the corresponding type
         :rtype: :class:`secsgem.secs.variables.Base`
         """
-        if sv.svid == SVID_CLOCK:
+        if sv.svid == self.SVID_CLOCK:
             return sv.value_type(self._get_clock())
-        if sv.svid == SVID_CONTROL_STATE:
+        if sv.svid == self.SVID_CONTROL_STATE:
             return sv.value_type(self._get_control_state_id())
-        if sv.svid == SVID_EVENTS_ENABLED:
+        if sv.svid == self.SVID_EVENTS_ENABLED:
             events = self._get_events_enabled()
             return sv.value_type(secsgem.secs.data_items.SV, events)
-        if sv.svid == SVID_ALARMS_ENABLED:
+        if sv.svid == self.SVID_ALARMS_ENABLED:
             alarms = self._get_alarms_enabled()
             return sv.value_type(secsgem.secs.data_items.SV, alarms)
-        if sv.svid == SVID_ALARMS_SET:
+        if sv.svid == self.SVID_ALARMS_SET:
             alarms = self._get_alarms_set()
             return sv.value_type(secsgem.secs.data_items.SV, alarms)
 
@@ -821,9 +821,9 @@ class GemEquipmentHandler(GemHandler):
         :returns: The value encoded in the corresponding type
         :rtype: :class:`secsgem.secs.variables.Base`
         """
-        if ec.ecid == ECID_ESTABLISH_COMMUNICATIONS_TIMEOUT:
+        if ec.ecid == self.ECID_ESTABLISH_COMMUNICATIONS_TIMEOUT:
             return ec.value_type(self.establishCommunicationTimeout)
-        if ec.ecid == ECID_TIME_FORMAT:
+        if ec.ecid == self.ECID_TIME_FORMAT:
             return ec.value_type(self._time_format)
 
         if ec.use_callback:
@@ -839,9 +839,9 @@ class GemEquipmentHandler(GemHandler):
         :param value: The value encoded in the corresponding type
         :type value: :class:`secsgem.secs.variables.Base`
         """
-        if ec.ecid == ECID_ESTABLISH_COMMUNICATIONS_TIMEOUT:
+        if ec.ecid == self.ECID_ESTABLISH_COMMUNICATIONS_TIMEOUT:
             self.establishCommunicationTimeout = value
-        if ec.ecid == ECID_TIME_FORMAT:
+        if ec.ecid == self.ECID_TIME_FORMAT:
             self._time_format = value
 
         if ec.use_callback:
