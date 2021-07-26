@@ -1770,8 +1770,8 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertFalse(clientCommandThread.is_alive())
 
         self.assertFalse(self.client.alarms[25].set)
-        
-    def testAlarmTriggerOnCollectionEvent(self):
+
+    def testAlarmTriggerOnCollectionEventWithEnabledAlarm(self):
         self.setupTestAlarms()
         self.establishCommunication()
 
