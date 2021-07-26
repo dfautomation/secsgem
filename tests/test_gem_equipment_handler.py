@@ -166,7 +166,8 @@ class TestEquipmentConstant(unittest.TestCase):
 
 class TestAlarm(unittest.TestCase):
     def testConstructorWithInt(self):
-        alarm = secsgem.gem.Alarm(123, "TestAlarm", "TestAlarmText", secsgem.secs.data_items.ALCD.PERSONAL_SAFETY | secsgem.secs.data_items.ALCD.EQUIPMENT_SAFETY, 100025, 200025, param1="param1", param2=2)
+        alarm = secsgem.gem.Alarm(123, "TestAlarm", "TestAlarmText", secsgem.secs.data_items.ALCD.PERSONAL_SAFETY |
+                                  secsgem.secs.data_items.ALCD.EQUIPMENT_SAFETY, 100025, 200025, param1="param1", param2=2)
 
         self.assertEqual(alarm.alid, 123)
         self.assertEqual(alarm.name, "TestAlarm")
@@ -178,7 +179,8 @@ class TestAlarm(unittest.TestCase):
         self.assertEqual(alarm.param2, 2)
 
     def testConstructorWithStr(self):
-        alarm = secsgem.gem.Alarm("AL123", "TestAlarm", "TestAlarmText", secsgem.secs.data_items.ALCD.PERSONAL_SAFETY | secsgem.secs.data_items.ALCD.EQUIPMENT_SAFETY, 100025, 200025, param1="param1", param2=2)
+        alarm = secsgem.gem.Alarm("AL123", "TestAlarm", "TestAlarmText", secsgem.secs.data_items.ALCD.PERSONAL_SAFETY |
+                                  secsgem.secs.data_items.ALCD.EQUIPMENT_SAFETY, 100025, 200025, param1="param1", param2=2)
 
         self.assertEqual(alarm.alid, "AL123")
         self.assertEqual(alarm.name, "TestAlarm")
@@ -273,7 +275,7 @@ class TestGemEquipmentHandler(unittest.TestCase):
         self.assertEqual(client.controlState.current, "ONLINE_LOCAL")
 
         client.control_switch_offline()
-        
+
         self.assertEqual(client.controlState.current, "EQUIPMENT_OFFLINE")
 
     def testSVControlStateOnlineLocal(self):
@@ -283,9 +285,10 @@ class TestGemEquipmentHandler(unittest.TestCase):
         self.assertEqual(client.controlState.current, "ONLINE_LOCAL")
         self.assertEqual(client._get_control_state_id(), 4)
 
+
 class TestGemEquipmentHandlerPassive(unittest.TestCase, GemHandlerPassiveGroup):
     __testClass = secsgem.gem.GemEquipmentHandler
-    
+
     def setUp(self):
         self.assertIsNotNone(self.__testClass)
 
@@ -470,7 +473,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
 
         self.assertEqual(self.client.controlState.current, "ONLINE_REMOTE")
 
-    def setupTestStatusVariables(self, use_callback = False):
+    def setupTestStatusVariables(self, use_callback=False):
         self.client.status_variables.update({
             10: secsgem.gem.StatusVariable(10, "sample1, numeric SVID, U4", "meters", secsgem.secs.variables.U4, use_callback),
             "SV2": secsgem.gem.StatusVariable("SV2", "sample2, text SVID, String", "chars", secsgem.secs.variables.String, use_callback),
@@ -478,7 +481,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
 
         self.client.status_variables[10].value = 123
         self.client.status_variables["SV2"].value = "sample sv"
-        
+
     def sendSVNamelistRequest(self, svs=[]):
         system_id = self.server.get_next_system_counter()
         self.server.simulate_packet(self.server.generate_stream_function_packet(system_id, secsgem.secs.functions.SecsS01F11(svs)))
@@ -494,7 +497,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         return self.client.secs_decode(packet)
 
     def testStatusVariableNameListAll(self):
-        self.setupTestStatusVariables()        
+        self.setupTestStatusVariables()
         self.establishCommunication()
 
         function = self.sendSVNamelistRequest()
@@ -512,7 +515,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertEqual(SV10[2].get(), "meters")
 
     def testStatusVariableNameListLimited(self):
-        self.setupTestStatusVariables()        
+        self.setupTestStatusVariables()
         self.establishCommunication()
 
         function = self.sendSVNamelistRequest(["SV2", 10])
@@ -532,7 +535,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertEqual(SV10[2].get(), "meters")
 
     def testStatusVariableNameListInvalid(self):
-        self.setupTestStatusVariables()        
+        self.setupTestStatusVariables()
         self.establishCommunication()
 
         function = self.sendSVNamelistRequest(["asdfg"])
@@ -559,7 +562,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         return self.client.secs_decode(packet)
 
     def testStatusVariableAll(self):
-        self.setupTestStatusVariables()        
+        self.setupTestStatusVariables()
         self.establishCommunication()
 
         function = self.sendSVRequest()
@@ -571,7 +574,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertIsNotNone(SV2)
 
     def testStatusVariableLimited(self):
-        self.setupTestStatusVariables()        
+        self.setupTestStatusVariables()
         self.establishCommunication()
 
         function = self.sendSVRequest(["SV2", 10])
@@ -587,7 +590,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertEqual(SV10.get(), 123)
 
     def testStatusVariableWithCallback(self):
-        self.setupTestStatusVariables(True)        
+        self.setupTestStatusVariables(True)
         self.establishCommunication()
 
         function = self.sendSVRequest(["SV2", 10])
@@ -603,7 +606,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertEqual(SV10.get(), 123)
 
     def testStatusVariableInvalid(self):
-        self.setupTestStatusVariables()        
+        self.setupTestStatusVariables()
         self.establishCommunication()
 
         function = self.sendSVRequest(["asdfg"])
@@ -642,7 +645,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
 
         self.assertIsNotNone(equ_time)
 
-        equ_datetime = datetime.datetime.strptime(equ_time.get()+"000", "%Y%m%d%H%M%S%f")
+        equ_datetime = datetime.datetime.strptime(equ_time.get() + "000", "%Y%m%d%H%M%S%f")
 
         self.assertTrue(now - delta < equ_datetime < now + delta)
 
@@ -859,7 +862,8 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
 
     def sendAlarmEnable(self, enable=True, alid=25):
         system_id = self.server.get_next_system_counter()
-        self.server.simulate_packet(self.server.generate_stream_function_packet(system_id, secsgem.secs.functions.SecsS05F03({"ALED": secsgem.secs.data_items.ALED.ENABLE if enable else secsgem.secs.data_items.ALED.DISABLE, "ALID": alid})))
+        self.server.simulate_packet(self.server.generate_stream_function_packet(system_id, secsgem.secs.functions.SecsS05F03(
+            {"ALED": secsgem.secs.data_items.ALED.ENABLE if enable else secsgem.secs.data_items.ALED.DISABLE, "ALID": alid})))
 
         packet = self.server.expect_packet(system_id=system_id)
 
@@ -884,7 +888,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertEqual(packet.header.function, 16)
 
         return self.client.secs_decode(packet)
-        
+
     def testCollectionEventRegisterReport(self):
         self.setupTestDataValues()
         self.establishCommunication()
@@ -1314,7 +1318,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertEqual(function.RPT[0].RPTID.get(), 1000)
         self.assertEqual(function.RPT[0].V[0].get(), 31337)
 
-    def setupTestEquipmentConstants(self, use_callback = False):
+    def setupTestEquipmentConstants(self, use_callback=False):
         self.client.equipment_constants.update({
             20: secsgem.gem.EquipmentConstant(20, "sample1, numeric ECID, I4", 0, 500, 50, "degrees", secsgem.secs.variables.I4, use_callback),
             "EC2": secsgem.gem.EquipmentConstant("EC2", "sample2, text ECID, String", None, None, "", "chars", secsgem.secs.variables.String, use_callback),
@@ -1364,7 +1368,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertEqual(packet.header.function, 16)
 
         return self.client.secs_decode(packet)
-                
+
     def testEquipmentConstantNameListAll(self):
         self.setupTestEquipmentConstants()
         self.establishCommunication()
@@ -2089,7 +2093,8 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.client.callbacks.rcmd_TEST_RCMD = f
 
         system_id = self.server.get_next_system_counter()
-        self.server.simulate_packet(self.server.generate_stream_function_packet(system_id, secsgem.secs.functions.SecsS02F41({"RCMD": "TEST_RCMD", "PARAMS": [{"CPNAME": "TEST_PARAMETER", "CPVAL": ""}]})))
+        self.server.simulate_packet(self.server.generate_stream_function_packet(system_id, secsgem.secs.functions.SecsS02F41({
+                                    "RCMD": "TEST_RCMD", "PARAMS": [{"CPNAME": "TEST_PARAMETER", "CPVAL": ""}]})))
 
         packet = self.server.expect_packet(system_id=system_id)
 
@@ -2169,7 +2174,8 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.client.callbacks.rcmd_TEST_RCMD = f
 
         system_id = self.server.get_next_system_counter()
-        self.server.simulate_packet(self.server.generate_stream_function_packet(system_id, secsgem.secs.functions.SecsS02F41({"RCMD": "TEST_RCMD", "PARAMS": [{"CPNAME": "INVALID_PARAMETER", "CPVAL": ""}]})))
+        self.server.simulate_packet(self.server.generate_stream_function_packet(system_id, secsgem.secs.functions.SecsS02F41({
+                                    "RCMD": "TEST_RCMD", "PARAMS": [{"CPNAME": "INVALID_PARAMETER", "CPVAL": ""}]})))
 
         packet = self.server.expect_packet(system_id=system_id)
 
@@ -2269,4 +2275,3 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
 
         self.assertIsNotNone(function.get())
         self.assertEqual(function.CEID.get(), self.client.CEID_CMD_STOP_DONE)
-
