@@ -142,7 +142,7 @@ class List(Base):
     def _generate(self, data_format):
         if data_format is None:
             return None
-        from . import array, functions
+        from . import functions
 
         result_data = OrderedDict()
         for item in data_format:
@@ -151,15 +151,11 @@ class List(Base):
                 continue
 
             item_value = functions.generate(item)
-            if isinstance(item_value, array.Array):
-                result_data[item_value.name] = item_value
-            elif isinstance(item_value, List):
-                result_data[List.get_name_from_format(item)] = item_value
-            elif isinstance(item_value, Base):
-                result_data[item_value.name] = item_value
-            else:
+
+            if not isinstance(item_value, Base):
                 raise TypeError("Can't handle item of class {}".format(data_format.__class__.__name__))
 
+            result_data[item_value.name] = item_value
         return result_data
 
     def __getattr__(self, item):

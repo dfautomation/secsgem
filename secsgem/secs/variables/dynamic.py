@@ -124,17 +124,13 @@ class Dynamic(Base):
         """
         if isinstance(value, Base):
             if isinstance(value, Dynamic):
-                if not isinstance(value.value, tuple(self.types)) and self.types:
-                    raise ValueError("Unsupported type {} for this instance of Dynamic, allowed {}"
-                                     .format(value.value.__class__.__name__, self.types))
+                value = value.value
 
-                self.value = value.value
-            else:
-                if not isinstance(value, tuple(self.types)) and self.types:
-                    raise ValueError("Unsupported type {} for this instance of Dynamic, allowed {}"
-                                     .format(value.__class__.__name__, self.types))
+            if self.types and not any([value.format_code == t.format_code for t in self.types]):
+                raise ValueError("Unsupported type {} for this instance of Dynamic, allowed {}"
+                                 .format(value.__class__.__name__, self.types))
 
-                self.value = value
+            self.value = value
         else:
             matched_type = self._match_type(value)
 
