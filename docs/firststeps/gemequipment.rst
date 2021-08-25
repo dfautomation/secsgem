@@ -187,7 +187,7 @@ The collection event and parameters for the remote command must be provided when
                 5001: secsgem.gem.CollectionEvent(5001, "TEST_RCMD complete", []),
             })
             self.remote_commands.update({
-                "TEST_RCMD": secsgem.gem.RemoteCommand("TEST_RCMD", "test rcmd", ["TEST_PARAMETER"], 5001),
+                "TEST_RCMD": secsgem.gem.RemoteCommand("TEST_RCMD", "test rcmd", ["TEST_PARAMETER"], [], 5001),
             })
 
         def on_rcmd_TEST_RCMD(self, TEST_PARAMETER):

@@ -21,7 +21,7 @@ import secsgem.secs
 class RemoteCommand:
     """Remote command definition."""
 
-    def __init__(self, rcmd, name, params, ce_finished, **kwargs):
+    def __init__(self, rcmd, name, opt_params, req_params, ce_finished, **kwargs):
         """
         Initialize a remote command.
 
@@ -35,14 +35,18 @@ class RemoteCommand:
         :type rcmd: various
         :param name: long name of the status variable
         :type name: string
-        :param params: array of available parameter names
-        :type params: list
+        :param opt_params: array of optional parameter names
+        :type opt_params: list
+        :param req_params: array of required parameter names
+        :type req_params: list
         :param ce_finished: collection event to trigger when remote command was finished
         :type ce_finished: types supported by data item CEID
         """
         self.rcmd = rcmd
         self.name = name
-        self.params = params
+        self.opt_params = opt_params
+        self.req_params = req_params
+        self.params = opt_params + req_params
         self.ce_finished = ce_finished
 
         if isinstance(self.rcmd, int):

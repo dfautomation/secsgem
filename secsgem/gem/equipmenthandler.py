@@ -118,8 +118,8 @@ class GemEquipmentHandler(GemHandler):
         }
 
         self._remote_commands = {
-            RCMD_START: RemoteCommand(RCMD_START, "Start", [], CEID_CMD_START_DONE),
-            RCMD_STOP: RemoteCommand(RCMD_STOP, "Stop", [], CEID_CMD_STOP_DONE),
+            RCMD_START: RemoteCommand(RCMD_START, "Start", [], [], CEID_CMD_START_DONE),
+            RCMD_STOP: RemoteCommand(RCMD_STOP, "Stop", [], [], CEID_CMD_STOP_DONE),
         }
 
         self._registered_reports = {}
@@ -1038,11 +1038,28 @@ class GemEquipmentHandler(GemHandler):
             self.logger.warning("callback for remote command %s not available", rcmd_name)
             return self.stream_function(2, 42)({"HCACK": secsgem.secs.data_items.HCACK.INVALID_COMMAND, "PARAMS": []})
 
+        # check invalid parameters
+        invalid_params = []
+        required_params = self._remote_commands[rcmd_name].req_params.copy()
         for param in message.PARAMS:
             if param.CPNAME.get() not in self._remote_commands[rcmd_name].params:
                 self.logger.warning("parameter %s for remote command %s not available", param.CPNAME.get(), rcmd_name)
-                return self.stream_function(2, 42)({"HCACK": secsgem.secs.data_items.HCACK.PARAMETER_INVALID,
-                                                    "PARAMS": []})
+                invalid_params.append({
+                    "CPNAME": param.CPNAME.get(),
+                    "CPACK": secsgem.secs.data_items.CPACK.PARAMETER_UNKNOWN,
+                })
+            elif param.CPNAME.get() in required_params:
+                required_params.remove(param.CPNAME.get())
+
+        for p in required_params:
+            invalid_params.append({
+                'CPNAME': p,
+                'CPACK': secsgem.secs.data_items.CPACK.CPVAL_ILLEGAL_VALUE,
+            })
+
+        if invalid_params:
+            return self.stream_function(2, 42)({"HCACK": secsgem.secs.data_items.HCACK.PARAMETER_INVALID,
+                                                "PARAMS": invalid_params})
 
         self.send_response(self.stream_function(2, 42)({"HCACK": secsgem.secs.data_items.HCACK.ACK_FINISH_LATER,
                                                         "PARAMS": []}),

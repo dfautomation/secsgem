@@ -182,20 +182,24 @@ class TestAlarm(unittest.TestCase):
 
 class TestRemoteCommand(unittest.TestCase):
     def testConstructorWithInt(self):
-        rcmd = secsgem.gem.RemoteCommand(123, "TestRCMD", [], 100025, param1="param1", param2=2)
+        rcmd = secsgem.gem.RemoteCommand(123, "TestRCMD", [], [], 100025, param1="param1", param2=2)
 
         self.assertEqual(rcmd.rcmd, 123)
         self.assertEqual(rcmd.name, "TestRCMD")
+        self.assertEqual(rcmd.opt_params, [])
+        self.assertEqual(rcmd.req_params, [])
         self.assertEqual(rcmd.params, [])
         self.assertEqual(rcmd.ce_finished, 100025)
         self.assertEqual(rcmd.param1, "param1")
         self.assertEqual(rcmd.param2, 2)
 
     def testConstructorWithStr(self):
-        rcmd = secsgem.gem.RemoteCommand("TEST_RCMD", "TestRCMD", [], 100025, param1="param1", param2=2)
+        rcmd = secsgem.gem.RemoteCommand("TEST_RCMD", "TestRCMD", [], [], 100025, param1="param1", param2=2)
 
         self.assertEqual(rcmd.rcmd, "TEST_RCMD")
         self.assertEqual(rcmd.name, "TestRCMD")
+        self.assertEqual(rcmd.opt_params, [])
+        self.assertEqual(rcmd.req_params, [])
         self.assertEqual(rcmd.params, [])
         self.assertEqual(rcmd.ce_finished, 100025)
         self.assertEqual(rcmd.param1, "param1")
@@ -741,7 +745,7 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
             5001: secsgem.gem.CollectionEvent(5001, "TEST_RCMD complete", []),
         })
         self.client.remote_commands.update({
-            "TEST_RCMD": secsgem.gem.RemoteCommand("TEST_RCMD", "test rcmd", ["TEST_PARAMETER"], 5001),
+            "TEST_RCMD": secsgem.gem.RemoteCommand("TEST_RCMD", "test rcmd", ["TEST_PARAMETER"], [], 5001),
         })
 
     def sendCEDefineReport(self, dataid=100, rptid=1000, vid=[30], empty_data=False):
