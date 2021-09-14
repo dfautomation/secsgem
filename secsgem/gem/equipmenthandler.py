@@ -1122,7 +1122,7 @@ class GemEquipmentHandler(GemHandler):
 
         # check invalid parameters
         invalid_params = []
-        required_params = self._remote_commands[rcmd_name].req_params.copy()
+        required_params = self._remote_commands[rcmd_name].req_params[:]
         for param in message.PARAMS:
             if param.CPNAME.get() not in self._remote_commands[rcmd_name].params:
                 self.logger.warning("parameter %s for remote command %s not available", param.CPNAME.get(), rcmd_name)
