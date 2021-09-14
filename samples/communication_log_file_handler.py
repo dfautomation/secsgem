@@ -17,6 +17,7 @@
 import os
 import logging
 
+
 class CommunicationLogFileHandler(logging.Handler):
     def __init__(self, path, prefix=""):
         logging.Handler.__init__(self)
@@ -26,6 +27,10 @@ class CommunicationLogFileHandler(logging.Handler):
 
     def emit(self, record):
         filename = os.path.join(self.path, "{}com_{}.log".format(self.prefix, record.remoteName))
-        os.makedirs(os.path.dirname(filename), exist_ok=True)        
+        try:
+            os.makedirs(os.path.dirname(filename))
+        except Exception:
+            pass
+
         with open(filename, 'a') as f:
             f.write(self.format(record) + "\n")
