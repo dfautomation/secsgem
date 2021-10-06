@@ -181,8 +181,12 @@ class GemEquipmentHandler(GemHandler):
         vids.update(self._equipment_constants)
         vids.update(self._status_variables)
         vids.update(self._data_values)
+
         if (len(self._equipment_constants) + len(self._status_variables) + len(self._data_values)) != len(vids):
-            raise RuntimeError("VID collision detected between ECID, SVID and DVID. Prevent enable command.")
+            a = set(self._equipment_constants)
+            b = set(self._status_variables)
+            c = set(self._data_values)
+            raise RuntimeError("VID collision detected between ECID, SVID and DVID: %s" % (a & b | a & c | b & c))
 
     def enable(self):
         """Enable the connection."""
