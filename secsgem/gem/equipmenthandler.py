@@ -1052,7 +1052,11 @@ class GemEquipmentHandler(GemHandler):
         result = secsgem.secs.data_items.ACKC5.ACCEPTED
 
         alid = message.ALID.get()
-        if alid not in self._alarms:
+        if isinstance(alid, list) and len(alid) == 0:
+            enabled = (message.ALED.get() == secsgem.secs.data_items.ALED.ENABLE)
+            for alarm in self.alarms.values():
+                alarm.enabled = enabled
+        elif alid not in self._alarms:
             result = secsgem.secs.data_items.ACKC5.ERROR
         else:
             self.alarms[alid].enabled = (message.ALED.get() == secsgem.secs.data_items.ALED.ENABLE)
