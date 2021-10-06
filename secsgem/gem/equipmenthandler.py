@@ -168,6 +168,27 @@ class GemEquipmentHandler(GemHandler):
 
         self.controlState.start()
 
+    def validate(self):
+        """
+        Get the validity of current equipment configuation.
+        Raise RuntimeError if validation failed
+
+        :return: Return None if valid.
+        :rtype: None
+        """
+        # check VID collision
+        vids = {}
+        vids.update(self._equipment_constants)
+        vids.update(self._status_variables)
+        vids.update(self._data_values)
+        if (len(self._equipment_constants) + len(self._status_variables) + len(self._data_values)) != len(vids):
+            raise RuntimeError("VID collision detected between ECID, SVID and DVID. Prevent enable command.")
+
+    def enable(self):
+        """Enable the connection."""
+        self.validate()
+        super(GemEquipmentHandler, self).enable()
+
     # control state model
 
     def _on_control_state_control(self, _):
@@ -572,7 +593,8 @@ class GemEquipmentHandler(GemHandler):
                 DRACK = 3
                 break
             for vid in report.VID:
-                if vid not in self._data_values and vid not in self._status_variables:
+                if vid not in self._data_values and vid not in self._status_variables and \
+                        vid not in self._equipment_constants:
                     DRACK = 4
                     break
             if DRACK != 0:
@@ -761,6 +783,8 @@ class GemEquipmentHandler(GemHandler):
                 elif var in self._data_values:
                     v = self._get_dv_value(self._data_values[var])
                     variables.append(v)
+                elif var in self._equipment_constants:
+                    v = self._get_ec_value(self._equipment_constants[var])
 
             reports.append({"RPTID": rptid, "V": variables})
 
