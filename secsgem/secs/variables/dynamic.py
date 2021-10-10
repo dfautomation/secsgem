@@ -80,7 +80,7 @@ class Dynamic(Base):
             return other.value == self.value.value
         if isinstance(other, list):
             return other == self.value.value
-        if isinstance(other, (bytes, six.text_type)) and isinstance(self.value.value, (bytes, six.text_type)):
+        if isinstance(other, (bytes, six.string_types)) and isinstance(self.value.value, (bytes, six.string_types)):
             return str(other) == str(self.value.value)
 
         return [other] == self.value.value

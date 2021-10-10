@@ -15,6 +15,8 @@
 #####################################################################
 """SECS binary variable type."""
 
+import six
+
 from .base import Base
 
 
@@ -126,7 +128,7 @@ class Binary(Base):
                 return False
             return True
 
-        if isinstance(value, str):
+        if isinstance(value, six.string_types):
             if self.count > 0 and len(value) > self.count:
                 return False
             try:
@@ -150,7 +152,7 @@ class Binary(Base):
 
         if isinstance(value, bytes):
             value = bytearray(value)
-        elif isinstance(value, str):
+        elif isinstance(value, six.string_types):
             value = bytearray(value.encode('ascii'))
         elif isinstance(value, (list, tuple)):
             value = bytearray(value)

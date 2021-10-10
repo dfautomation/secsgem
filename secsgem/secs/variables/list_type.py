@@ -88,7 +88,7 @@ class List(Base):
         if isinstance(data_format, list):
             items = []
             for item in data_format:
-                if isinstance(item, str):
+                if isinstance(item, six.string_types):
                     continue
                 if isinstance(item, list):
                     if len(item) == 1:
@@ -146,7 +146,7 @@ class List(Base):
 
         result_data = OrderedDict()
         for item in data_format:
-            if isinstance(item, str):
+            if isinstance(item, six.string_types):
                 self.name = item
                 continue
 
@@ -195,7 +195,7 @@ class List(Base):
         if not isinstance(data_format, list):
             raise TypeError("Can't generate item name of class {}".format(data_format.__class__.__name__))
 
-        if isinstance(data_format[0], str):
+        if isinstance(data_format[0], six.string_types):
             return data_format[0]
 
         return "DATA"

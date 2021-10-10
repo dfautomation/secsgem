@@ -15,6 +15,8 @@
 #####################################################################
 """SECS boolean variable type."""
 
+import six
+
 from .base import Base
 
 
@@ -93,7 +95,7 @@ class Boolean(Base):
                 return True
             return False
 
-        if isinstance(value, str):
+        if isinstance(value, six.string_types):
             if value.upper() in self._true_strings or value.upper() in self._false_strings:
                 return True
 
@@ -137,7 +139,7 @@ class Boolean(Base):
 
             return bool(value)
 
-        if isinstance(value, str):
+        if isinstance(value, six.string_types):
             if value.upper() in self._true_strings:
                 return True
 

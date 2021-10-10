@@ -16,6 +16,7 @@
 #####################################################################
 
 import sys
+import six
 
 import unittest
 
@@ -29,7 +30,7 @@ from secsgem.secs.data_items import MDLN, OBJACK, SOFTREV, SVID
 def printable_value(value):
     if isinstance(value, bytes):
         return value.decode('unicode_escape')
-    elif isinstance(value, str):
+    elif isinstance(value, six.string_types):
         return value
     else:
         return value

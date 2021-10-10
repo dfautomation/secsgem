@@ -133,7 +133,7 @@ class BaseText(Base):
                 return False
             return True
 
-        if isinstance(value, six.text_type):
+        if isinstance(value, six.string_types):
             if 0 < self.count < len(value):
                 return False
             try:
@@ -163,7 +163,7 @@ class BaseText(Base):
             value = bytes(bytearray(value)).decode(self.coding)
         elif isinstance(value, (int, float, complex)):
             value = six.text_type(value)
-        elif isinstance(value, six.text_type):
+        elif isinstance(value, six.string_types):
             value.encode(self.coding)  # try if it can be encoded as ascii (values 0-127)
         else:
             raise TypeError("Unsupported type {} for {}".format(type(value).__name__, self.__class__.__name__))
