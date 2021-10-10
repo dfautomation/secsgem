@@ -777,6 +777,9 @@ class GemEquipmentHandler(GemHandler):
         """
         reports = []
 
+        if ceid not in self._registered_collection_event_links:
+            return reports
+
         for rptid in self._registered_collection_event_links[ceid].reports:
             report = self._registered_reports[rptid]
             variables = []
