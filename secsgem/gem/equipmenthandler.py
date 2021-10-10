@@ -1152,11 +1152,12 @@ class GemEquipmentHandler(GemHandler):
             self.logger.warning("callback for remote command %s not available", rcmd_name)
             return self.stream_function(2, 42)({"HCACK": secsgem.secs.data_items.HCACK.INVALID_COMMAND, "PARAMS": []})
 
+        rcmd = self._remote_commands[rcmd_name]
         # check invalid parameters
         invalid_params = []
-        required_params = self._remote_commands[rcmd_name].req_params[:]
+        required_params = rcmd.req_params[:]
         for param in message.PARAMS:
-            if param.CPNAME.get() not in self._remote_commands[rcmd_name].params:
+            if param.CPNAME.get() not in rcmd.params:
                 self.logger.warning("parameter %s for remote command %s not available", param.CPNAME.get(), rcmd_name)
                 invalid_params.append({
                     "CPNAME": param.CPNAME.get(),
@@ -1187,7 +1188,8 @@ class GemEquipmentHandler(GemHandler):
 
         callback(**kwargs)
 
-        self.trigger_collection_events([self._remote_commands[rcmd_name].ce_finished])
+        if rcmd.ce_finished:
+            self.trigger_collection_events([rcmd.ce_finished])
 
         return None
 
