@@ -238,7 +238,8 @@ class HsmsConnection(object):  # pragma: no cover
             try:
                 self.delegate.on_connection_packet_received(self, response)
             except Exception:  # pylint: disable=broad-except
-                self.logger.exception('ignoring exception for on_connection_packet_received handler')
+                self.logger.exception('ignoring exception for on_connection_packet_received handler. s%sf%s  data:%s' %
+                        (response.header.stream, response.header.function, response.data.encode('hex')))
 
         # return True if more data is available
         if len(self.receiveBuffer) > 0:
