@@ -127,16 +127,16 @@ class Dynamic(Base):
                 value = value.value
 
             if self.types and not any([value.format_code == t.format_code for t in self.types]):
-                raise ValueError("Unsupported type {} for this instance of Dynamic, allowed {}"
-                                 .format(value.__class__.__name__, self.types))
+                raise ValueError("Unsupported type {} for this instance of Dynamic ({}), allowed {}"
+                                 .format(value.__class__.__name__, self.__class__.__name__, self.types))
 
             self.value = value
         else:
             matched_type = self._match_type(value)
 
             if matched_type is None:
-                raise ValueError('Value "{}" of type {} not valid for SecsDynamic with {}'
-                                 .format(value, value.__class__.__name__, self.types))
+                raise ValueError('Value "{}" of type {} not valid for SecsDynamic ({}) with {}'
+                                 .format(value, value.__class__.__name__, self.__class__.__name__, self.types))
 
             self.value = matched_type(count=self.count)
             self.value.set(value)
@@ -205,8 +205,9 @@ class Dynamic(Base):
             self.value = U4(count=self.count)
         else:
             raise ValueError(
-                "Unsupported format {} for this instance of Dynamic, allowed {}".format(
+                "Unsupported format {} for this instance of Dynamic ({}), allowed {}".format(
                     format_code,
+                    self.__class__.__name__,
                     self.types))
 
         return self.value.decode(data, start)
