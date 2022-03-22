@@ -792,6 +792,7 @@ class GemEquipmentHandler(GemHandler):
                     variables.append(v)
                 elif var in self._equipment_constants:
                     v = self._get_ec_value(self._equipment_constants[var])
+                    variables.append(v)
 
             reports.append({"RPTID": rptid, "V": variables})
 
