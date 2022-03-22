@@ -16,6 +16,7 @@
 """Wrapper for GEM collection event."""
 
 import secsgem.secs
+import six
 
 
 class CollectionEvent(object):
@@ -45,7 +46,7 @@ class CollectionEvent(object):
         self.data_values = data_values
         self.enabled = False
 
-        if isinstance(self.ceid, int):
+        if isinstance(self.ceid, six.integer_types):
             self.id_type = secsgem.secs.variables.U4
         else:
             self.id_type = secsgem.secs.variables.String

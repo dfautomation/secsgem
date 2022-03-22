@@ -16,6 +16,7 @@
 """Wrapper for GEM status variable."""
 
 import secsgem.secs
+import six
 
 
 class StatusVariable(object):
@@ -51,7 +52,7 @@ class StatusVariable(object):
         self.use_callback = use_callback
         self.value = 0
 
-        if isinstance(self.svid, int):
+        if isinstance(self.svid, six.integer_types):
             self.id_type = secsgem.secs.variables.U4
         else:
             self.id_type = secsgem.secs.variables.String

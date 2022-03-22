@@ -16,6 +16,7 @@
 """Wrapper for GEM equipment constant."""
 
 import secsgem.secs
+import six
 
 
 class EquipmentConstant(object):
@@ -61,7 +62,7 @@ class EquipmentConstant(object):
         self.use_callback = use_callback
         self.value = default_value
 
-        if isinstance(self.ecid, int):
+        if isinstance(self.ecid, six.integer_types):
             self.id_type = secsgem.secs.variables.U4
         else:
             self.id_type = secsgem.secs.variables.String

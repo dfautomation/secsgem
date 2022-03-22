@@ -26,6 +26,8 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+import six
+
 """
 USAGE.
 
@@ -232,7 +234,7 @@ class Fysom(object):  # pragma: no cover
 
     def _apply(self, cfg):
         init = cfg['initial'] if 'initial' in cfg else None
-        if isinstance(init, (str, bytes)):
+        if isinstance(init, (six.string_types, bytes)):
             init = {'state': init}
         events = cfg['events'] if 'events' in cfg else []
         callbacks = cfg['callbacks'] if 'callbacks' in cfg else {}
@@ -244,7 +246,7 @@ class Fysom(object):  # pragma: no cover
                 self._autoforward[autoforward['src']] = autoforward['dst']
 
         def add(event):
-            sources = [event['src']] if isinstance(event['src'], (str, bytes)) else event['src']
+            sources = [event['src']] if isinstance(event['src'], (six.string_types, bytes)) else event['src']
             if event['name'] not in tmap:
                 tmap[event['name']] = {}
             for source in sources:

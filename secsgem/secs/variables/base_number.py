@@ -16,6 +16,7 @@
 """SECS numeric variable base type."""
 
 import struct
+import six
 
 from .base import Base
 
@@ -92,12 +93,12 @@ class BaseNumber(Base):
         if isinstance(value, bool):
             return True
 
-        if isinstance(value, (int, float)):
+        if isinstance(value, (six.integer_types, float)):
             if value < self._min or value > self._max:
                 return False
             return True
 
-        if isinstance(value, (bytes, str)):
+        if isinstance(value, (bytes, six.string_types)):
             try:
                 val = self._base_type(value)
             except ValueError:

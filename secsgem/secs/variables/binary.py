@@ -95,7 +95,7 @@ class Binary(Base):
         if isinstance(value, bool):
             return True
 
-        if isinstance(value, int):
+        if isinstance(value, six.integer_types):
             if 0 <= value <= 255:
                 return True
             return False
@@ -158,7 +158,7 @@ class Binary(Base):
             value = bytearray(value)
         elif isinstance(value, bytearray):
             pass
-        elif isinstance(value, int):
+        elif isinstance(value, six.integer_types):
             if 0 <= value <= 255:
                 value = bytearray([value])
             else:

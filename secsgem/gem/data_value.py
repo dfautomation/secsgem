@@ -16,6 +16,7 @@
 """Wrapper for GEM data value."""
 
 import secsgem.secs
+import six
 
 
 class DataValue(object):
@@ -49,7 +50,7 @@ class DataValue(object):
         self.use_callback = use_callback
         self.value = 0
 
-        if isinstance(self.dvid, int):
+        if isinstance(self.dvid, six.integer_types):
             self.id_type = secsgem.secs.variables.U4
         else:
             self.id_type = secsgem.secs.variables.String

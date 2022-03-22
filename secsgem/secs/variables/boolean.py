@@ -90,7 +90,7 @@ class Boolean(Base):
         if isinstance(value, bool):
             return True
 
-        if isinstance(value, int):
+        if isinstance(value, six.integer_types):
             if 0 <= value <= 1:
                 return True
             return False
@@ -133,7 +133,7 @@ class Boolean(Base):
         if isinstance(value, bool):
             return value
 
-        if isinstance(value, int):
+        if isinstance(value, six.integer_types):
             if not 0 <= value <= 1:
                 raise ValueError("Value {} out of bounds".format(value))
 

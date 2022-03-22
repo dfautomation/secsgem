@@ -16,6 +16,7 @@
 """Wrapper for GEM alarm."""
 
 import secsgem.secs
+import six
 
 
 class Alarm(object):
@@ -47,7 +48,7 @@ class Alarm(object):
         self.enabled = False
         self.set = False
 
-        if isinstance(self.alid, int):
+        if isinstance(self.alid, six.integer_types):
             self.id_type = secsgem.secs.variables.U4
         else:
             self.id_type = secsgem.secs.variables.String

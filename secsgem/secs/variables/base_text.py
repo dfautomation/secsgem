@@ -97,7 +97,7 @@ class BaseText(Base):
         if isinstance(value, bool):
             return True
 
-        if isinstance(value, int):
+        if isinstance(value, six.integer_types):
             if 0 <= value <= 255:
                 return True
             return False
@@ -128,7 +128,7 @@ class BaseText(Base):
                 return False
             return True
 
-        if isinstance(value, (int, float, complex)):
+        if isinstance(value, (six.integer_types, float, complex)):
             if 0 < self.count < len(six.text_type(value)):
                 return False
             return True
@@ -161,7 +161,7 @@ class BaseText(Base):
             value = bytes(value).decode(self.coding)
         elif isinstance(value, (list, tuple)):
             value = bytes(bytearray(value)).decode(self.coding)
-        elif isinstance(value, (int, float, complex)):
+        elif isinstance(value, (six.integer_types, float, complex)):
             value = six.text_type(value)
         elif isinstance(value, six.string_types):
             value.encode(self.coding)  # try if it can be encoded as ascii (values 0-127)

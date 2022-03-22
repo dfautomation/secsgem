@@ -118,7 +118,7 @@ class List(Base):
 
     def __getitem__(self, index):
         """Get an item using the indexer operator."""
-        if isinstance(index, int):
+        if isinstance(index, six.integer_types):
             return self.data[list(self.data.keys())[index]]
         return self.data[index]
 
@@ -128,7 +128,7 @@ class List(Base):
 
     def __setitem__(self, index, value):
         """Set an item using the indexer operator."""
-        if isinstance(index, int):
+        if isinstance(index, six.integer_types):
             index = list(self.data.keys())[index]
 
         if isinstance(value, (type(self.data[index]), self.data[index].__class__.__bases__)):

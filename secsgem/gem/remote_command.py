@@ -16,6 +16,7 @@
 """Wrapper for GEM remote command."""
 
 import secsgem.secs
+import six
 
 
 class RemoteCommand(object):
@@ -49,7 +50,7 @@ class RemoteCommand(object):
         self.params = opt_params + req_params
         self.ce_finished = ce_finished
 
-        if isinstance(self.rcmd, int):
+        if isinstance(self.rcmd, six.integer_types):
             self.id_type = secsgem.secs.variables.U4
         else:
             self.id_type = secsgem.secs.variables.String

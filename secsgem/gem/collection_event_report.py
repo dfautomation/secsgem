@@ -16,6 +16,7 @@
 """Wrapper for GEM collection event report."""
 
 import secsgem.secs
+import six
 
 
 class CollectionEventReport(object):
@@ -35,7 +36,7 @@ class CollectionEventReport(object):
         self.rptid = rptid
         self.vars = variables
 
-        if isinstance(self.rptid, int):
+        if isinstance(self.rptid, six.integer_types):
             self.id_type = secsgem.secs.variables.U4
         else:
             self.id_type = secsgem.secs.variables.String
