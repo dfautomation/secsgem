@@ -1234,13 +1234,15 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
 
     def testCollectionEventRequestReport(self):
         self.setupTestDataValues()
+        self.setupTestStatusVariables()
+        self.setupTestEquipmentConstants()
         self.setupTestCollectionEvents()
         self.establishCommunication()
 
         oldlenRPT = len(self.client.registered_reports)
         oldlenCE = len(self.client.registered_collection_event_links)
 
-        function = self.sendCEDefineReport()
+        function = self.sendCEDefineReport(vid=[10, 20, 30])
 
         self.assertIsNotNone(function.get())
         self.assertEqual(function.get(), 0)
@@ -1264,7 +1266,10 @@ class TestGemEquipmentHandlerPassiveControlState(unittest.TestCase):
         self.assertIsNotNone(function.get())
         self.assertEqual(function.CEID.get(), 50)
         self.assertEqual(function.RPT[0].RPTID.get(), 1000)
-        self.assertEqual(function.RPT[0].V[0].get(), 31337)
+        self.assertEqual(len(function.RPT[0].V), 3)
+        self.assertEqual(function.RPT[0].V[0].get(), 123)
+        self.assertEqual(function.RPT[0].V[1].get(), 321)
+        self.assertEqual(function.RPT[0].V[2].get(), 31337)
 
     def testCollectionEventRequestReportCallbackSV(self):
         self.setupTestDataValues(True)
