@@ -46,7 +46,7 @@ class Array(Base):
 
             raise StopIteration()
 
-    def __init__(self, data_format, value=None, count=-1):
+    def __init__(self, data_format, value=None, count=-1, name=None):
         """
         Initialize a secs array variable.
 
@@ -63,7 +63,9 @@ class Array(Base):
         self.item_decriptor = data_format
         self.count = count
         self.data = []
-        if isinstance(data_format, list):
+        if name is not None:
+            self.name = name
+        elif isinstance(data_format, list):
             self.name = list_type.List.get_name_from_format(data_format)
         elif hasattr(data_format, "__name__"):
             self.name = data_format.__name__

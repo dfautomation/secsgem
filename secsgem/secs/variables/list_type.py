@@ -48,7 +48,7 @@ class List(Base):
 
             raise StopIteration()
 
-    def __init__(self, data_format, value=None):
+    def __init__(self, data_format, value=None, name='DATA'):
         """
         Initialize a secs list variable.
 
@@ -61,7 +61,7 @@ class List(Base):
         """
         super(List, self).__init__()
 
-        self.name = "DATA"
+        self.name = name
 
         self.data = self._generate(data_format)
 
