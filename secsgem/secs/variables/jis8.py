@@ -35,6 +35,6 @@ class JIS8(BaseText):
 
     format_code = 0o21
     text_code = u"J"
-    preferred_types = [bytes, str]
+    preferred_types = [bytes, six.string_types]
     control_chars = u"".join(six.unichr(ch) for ch in range(256) if unicodedata.category(six.unichr(ch))[0] == "C")
     coding = "jis_8"
