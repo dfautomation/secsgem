@@ -7,7 +7,7 @@ here = path.abspath(path.dirname(__file__))
 setup(
     name='secsgem',
 
-    version='0.2.0',
+    version='0.2.1',
 
     description='Python SECS/GEM implementation',
 
