@@ -181,10 +181,8 @@ class HsmsConnection(object):  # pragma: no cover
         # encode the packet
         data = packet.encode()
 
-        # split data into blocks
-        blocks = [data[i: i + self.send_block_size] for i in range(0, len(data), self.send_block_size)]
-
-        for block in blocks:
+        for i in range(0, len(data), self.send_block_size):
+            block = data[i: i + self.send_block_size]
             retry = True
 
             # not sent yet, retry
