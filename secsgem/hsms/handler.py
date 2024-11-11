@@ -101,7 +101,9 @@ class HsmsHandler(object):
         self.systemCounter = random.randint(0, (2 ** 32) - 1)
 
         # repeating linktest variables
-        self.linktestTimer = None
+        self.linktestLock = threading.Lock()
+        self.linktestEvent = None
+        self.linktestThread = None
         self.linktestTimeout = 30
 
         # select request thread for active connections, to avoid blocking state changes
@@ -158,12 +160,6 @@ class HsmsHandler(object):
         if response is None:
             self.logger.warning("select request failed")
 
-    def _start_linktest_timer(self):
-        self.linktestTimer = threading.Timer(self.linktestTimeout, self._on_linktest_timer)
-        self.linktestTimer.daemon = True  # kill thread automatically on main program termination
-        self.linktestTimer.name = "secsgem_hsmsHandler_linktestTimer"
-        self.linktestTimer.start()
-
     def _on_state_connect(self):
         """
         Handle connection state model got event connect.
@@ -189,10 +185,7 @@ class HsmsHandler(object):
         :type data: object
         """
         # stop linktest timer
-        if self.linktestTimer:
-            self.linktestTimer.cancel()
-
-        self.linktestTimer = None
+        self._stop_linktest_timer()
 
     def _on_state_select(self):
         """
@@ -208,13 +201,33 @@ class HsmsHandler(object):
         if hasattr(self, '_on_hsms_select') and callable(getattr(self, '_on_hsms_select')):
             self._on_hsms_select()
 
-    def _on_linktest_timer(self):
-        """Linktest time timed out, so send linktest request."""
-        # send linktest request and wait for response
-        self.send_linktest_req()
+    def _start_linktest_timer(self):
+        with self.linktestLock:
+            if self.linktestEvent:
+                return
 
-        # restart the timer
-        self._start_linktest_timer()
+            self.linktestEvent = threading.Event()
+            self.linktestThread = threading.Thread(target=self._linktest_thread)
+            self.linktestThread.daemon = True  # kill thread automatically on main program termination
+            self.linktestThread.name = "secsgem_hsmsHandler_linktestTimer"
+            self.linktestThread.start()
+
+    def _stop_linktest_timer(self):
+        with self.linktestLock:
+            if not self.linktestEvent:
+                return
+
+            self.linktestEvent.set()
+            self.linktestThread.join()
+
+            self.linktestEvent = None
+            self.linktestThread = None
+
+    def _linktest_thread(self):
+
+        while not self.linktestEvent.wait(self.linktestTimeout):
+            # send linktest request and wait for response
+            self.send_linktest_req()
 
     def on_connection_established(self, _):
         """Handle connection was established event."""
