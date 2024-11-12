@@ -78,7 +78,7 @@ class List(Base):
         :returns: returns the string representation of the function
         :rtype: string
         """
-        from . import array
+        from .array import Array
 
         if showname:
             array_name = "{}: ".format(List.get_name_from_format(data_format))
@@ -92,7 +92,7 @@ class List(Base):
                     continue
                 if isinstance(item, list):
                     if len(item) == 1:
-                        items.append(secsgem.common.indent_block(array.Array.get_format(item[0], True), 4))
+                        items.append(secsgem.common.indent_block(Array.get_format(item[0], True), 4))
                     else:
                         items.append(secsgem.common.indent_block(List.get_format(item, True), 4))
                 else:
@@ -142,7 +142,7 @@ class List(Base):
     def _generate(self, data_format):
         if data_format is None:
             return None
-        from . import functions
+        from .functions import generate
 
         result_data = OrderedDict()
         for item in data_format:
@@ -150,7 +150,7 @@ class List(Base):
                 self.name = item
                 continue
 
-            item_value = functions.generate(item)
+            item_value = generate(item)
 
             if not isinstance(item_value, Base):
                 raise TypeError("Can't handle item of class {}".format(data_format.__class__.__name__))
