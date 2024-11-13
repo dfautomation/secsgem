@@ -190,11 +190,11 @@ class HsmsConnection(object):  # pragma: no cover
 
                 # not sent yet, retry
                 while retry:
-                    # wait until socket is writable
-                    while not select.select([], [self.sock], [], self.select_timeout)[1]:
-                        pass
-
                     try:
+                        # wait until socket is writable
+                        while not select.select([], [self.sock], [], self.select_timeout)[1]:
+                            pass
+
                         # send packet
                         self.sock.send(block)
 
@@ -205,6 +205,9 @@ class HsmsConnection(object):  # pragma: no cover
                             # raise if not EWOULDBLOCK
                             return False
                         # it is EWOULDBLOCK, so retry sending
+                    except Exception:
+                        self.logger.exception('error sending data to host.')
+                        return False
 
             return True
 
