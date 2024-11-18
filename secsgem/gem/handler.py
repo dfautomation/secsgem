@@ -152,9 +152,7 @@ class GemHandler(secsgem.secs.SecsHandler):
         elif self.communicationState.isstate('WAIT_DELAY'):
             pass
         elif self.communicationState.isstate('COMMUNICATING'):
-            threading.Thread(target=self._handle_stream_function, args=(packet, ),
-                             name="secsgem_gemHandler_callback_S{}F{}".format(packet.header.stream,
-                                                                              packet.header.function)).start()
+            self._handle_stream_function(packet)
 
     def _on_hsms_select(self):
         """Selected received from hsms layer."""
