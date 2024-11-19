@@ -18,7 +18,7 @@
 import random
 import threading
 import logging
-from six.moves import queue
+from collections import deque, namedtuple
 
 import secsgem.common
 
@@ -36,6 +36,8 @@ from .reject_req_header import HsmsRejectReqHeader
 from .separate_req_header import HsmsSeparateReqHeader
 from .stream_function_header import HsmsStreamFunctionHeader
 from .connectionstatemachine import ConnectionStateMachine
+
+SystemQueue = namedtuple('SystemQueue', ['event', 'queue'])
 
 
 class HsmsHandler(object):
@@ -119,6 +121,7 @@ class HsmsHandler(object):
 
         # response queues
         self._systemQueues = {}
+        self._systemQueuesLock = threading.Lock()
 
         # hsms connection state fsm
         self.connectionState = ConnectionStateMachine({"on_enter_CONNECTED": self._on_state_connect,
@@ -278,9 +281,11 @@ class HsmsHandler(object):
             # update connection state
             self.connectionState.select()
 
-            if packet.header.system in self._systemQueues:
-                # send packet to request sender
-                self._systemQueues[packet.header.system].put_nowait(packet)
+            with self._systemQueuesLock:
+                if packet.header.system in self._systemQueues:
+                    # send packet to request sender
+                    self._systemQueues[packet.header.system].queue.append(packet)
+                    self._systemQueues[packet.header.system].event.set()
 
             # what to do if no sender for request waiting?
 
@@ -299,9 +304,11 @@ class HsmsHandler(object):
             # update connection state
             self.connectionState.deselect()
 
-            if packet.header.system in self._systemQueues:
-                # send packet to request sender
-                self._systemQueues[packet.header.system].put_nowait(packet)
+            with self._systemQueuesLock:
+                if packet.header.system in self._systemQueues:
+                    # send packet to request sender
+                    self._systemQueues[packet.header.system].queue.append(packet)
+                    self._systemQueues[packet.header.system].event.set()
 
             # what to do if no sender for request waiting?
 
@@ -314,9 +321,11 @@ class HsmsHandler(object):
                 self.send_linktest_rsp(packet.header.system)
 
         else:
-            if packet.header.system in self._systemQueues:
-                # send packet to request sender
-                self._systemQueues[packet.header.system].put_nowait(packet)
+            with self._systemQueuesLock:
+                if packet.header.system in self._systemQueues:
+                    # send packet to request sender
+                    self._systemQueues[packet.header.system].queue.append(packet)
+                    self._systemQueues[packet.header.system].event.set()
 
             # what to do if no sender for request waiting?
 
@@ -346,11 +355,15 @@ class HsmsHandler(object):
                 return
 
             # someone is waiting for this message
-            if packet.header.system in self._systemQueues:
-                # send packet to request sender
-                self._systemQueues[packet.header.system].put_nowait(packet)
+            with self._systemQueuesLock:
+                if packet.header.system in self._systemQueues:
+                    # send packet to request sender
+                    self._systemQueues[packet.header.system].queue.append(packet)
+                    self._systemQueues[packet.header.system].event.set()
+                    return
+
             # redirect packet to hsms handler
-            elif hasattr(self, '_on_hsms_packet_received') and callable(getattr(self, '_on_hsms_packet_received')):
+            if hasattr(self, '_on_hsms_packet_received') and callable(getattr(self, '_on_hsms_packet_received')):
                 self._on_hsms_packet_received(packet)
             # just log if nobody is interested
             else:
@@ -365,8 +378,9 @@ class HsmsHandler(object):
         :returns: queue to receive responses with
         :rtype: queue.Queue
         """
-        self._systemQueues[system_id] = queue.Queue()
-        return self._systemQueues[system_id]
+        with self._systemQueuesLock:
+            self._systemQueues[system_id] = SystemQueue(threading.Event(), deque())
+            return self._systemQueues[system_id]
 
     def _remove_queue(self, system_id):
         """
@@ -375,7 +389,11 @@ class HsmsHandler(object):
         :param system_id: system id to remove
         :type system_id: int
         """
-        del self._systemQueues[system_id]
+        with self._systemQueuesLock:
+            if system_id not in self._systemQueues:
+                return
+
+            del self._systemQueues[system_id]
 
     def __repr__(self):
         """Generate textual representation for an object of this class."""
@@ -426,7 +444,7 @@ class HsmsHandler(object):
         """
         system_id = self.get_next_system_counter()
 
-        response_queue = self._get_queue_for_system(system_id)
+        system_queue = self._get_queue_for_system(system_id)
 
         out_packet = HsmsPacket(HsmsStreamFunctionHeader(system_id, packet.stream, packet.function, True,
                                                          self.sessionID),
@@ -440,9 +458,11 @@ class HsmsHandler(object):
             return None
 
         try:
-            response = response_queue.get(True, self.connection.T3)
-        except queue.Empty:
             response = None
+            if system_queue.event.wait(self.connection.T3):
+                response = system_queue.queue.popleft()
+        except IndexError:
+            pass
 
         self._remove_queue(system_id)
 
@@ -474,7 +494,7 @@ class HsmsHandler(object):
         """
         system_id = self.get_next_system_counter()
 
-        response_queue = self._get_queue_for_system(system_id)
+        system_queue = self._get_queue_for_system(system_id)
 
         packet = HsmsPacket(HsmsSelectReqHeader(system_id))
         self.communicationLogger.info("> %s\n  %s", packet, HSMS_STYPES[packet.header.sType])
@@ -484,9 +504,11 @@ class HsmsHandler(object):
             return None
 
         try:
-            response = response_queue.get(True, self.connection.T6)
-        except queue.Empty:
             response = None
+            if system_queue.event.wait(self.connection.T6):
+                response = system_queue.queue.popleft()
+        except IndexError:
+            pass
 
         self._remove_queue(system_id)
 
@@ -512,7 +534,7 @@ class HsmsHandler(object):
         """
         system_id = self.get_next_system_counter()
 
-        response_queue = self._get_queue_for_system(system_id)
+        system_queue = self._get_queue_for_system(system_id)
 
         packet = HsmsPacket(HsmsLinktestReqHeader(system_id))
         self.communicationLogger.info("> %s\n  %s", packet, HSMS_STYPES[packet.header.sType])
@@ -522,9 +544,11 @@ class HsmsHandler(object):
             return None
 
         try:
-            response = response_queue.get(True, self.connection.T6)
-        except queue.Empty:
             response = None
+            if system_queue.event.wait(self.connection.T6):
+                response = system_queue.queue.popleft()
+        except IndexError:
+            pass
 
         self._remove_queue(system_id)
 
@@ -550,7 +574,7 @@ class HsmsHandler(object):
         """
         system_id = self.get_next_system_counter()
 
-        response_queue = self._get_queue_for_system(system_id)
+        system_queue = self._get_queue_for_system(system_id)
 
         packet = HsmsPacket(HsmsDeselectReqHeader(system_id))
         self.communicationLogger.info("> %s\n  %s", packet, HSMS_STYPES[packet.header.sType])
@@ -560,9 +584,11 @@ class HsmsHandler(object):
             return None
 
         try:
-            response = response_queue.get(True, self.connection.T6)
-        except queue.Empty:
             response = None
+            if system_queue.event.wait(self.connection.T6):
+                response = system_queue.queue.popleft()
+        except IndexError:
+            pass
 
         self._remove_queue(system_id)
 
