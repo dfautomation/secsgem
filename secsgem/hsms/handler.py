@@ -109,6 +109,7 @@ class HsmsHandler(object):
 
         # system id counter
         self.systemCounter = random.randint(0, (2 ** 32) - 1)
+        self.systemCounterLock = threading.Lock()
 
         # repeating linktest variables
         self.linktestLock = threading.Lock()
@@ -159,12 +160,13 @@ class HsmsHandler(object):
         :returns: System for the next command
         :rtype: integer
         """
-        self.systemCounter += 1
+        with self.systemCounterLock:
+            self.systemCounter += 1
 
-        if self.systemCounter > ((2 ** 32) - 1):
-            self.systemCounter = 0
+            if self.systemCounter > ((2 ** 32) - 1):
+                self.systemCounter = 0
 
-        return self.systemCounter
+            return self.systemCounter
 
     def _send_select_req_thread(self):
         response = self.send_select_req()
