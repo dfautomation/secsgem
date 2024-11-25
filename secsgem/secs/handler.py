@@ -16,7 +16,6 @@
 """Handler for SECS commands. Used in combination with :class:`secsgem.HsmsHandler.HsmsConnectionManager`."""
 
 import logging
-import threading
 import copy
 
 import secsgem.hsms
@@ -236,9 +235,7 @@ class SecsHandler(secsgem.hsms.HsmsHandler):
         :type packet: :class:`secsgem.hsms.HsmsPacket`
         """
         # check if callbacks available for this stream and function
-        threading.Thread(
-            target=self._handle_stream_function, args=(packet, ),
-            name="secsgem_secsHandler_callback_S{}F{}".format(packet.header.stream, packet.header.function)).start()
+        self._handle_stream_function(packet)
 
     def disable_ceids(self):
         """Disable all Collection Events."""

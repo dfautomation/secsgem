@@ -57,7 +57,7 @@ class Array(Base):
         :param count: number of fields in the list
         :type count: integer
         """
-        from . import list_type
+        from .list_type import List
         super(Array, self).__init__()
 
         self.item_decriptor = data_format
@@ -66,7 +66,7 @@ class Array(Base):
         if name is not None:
             self.name = name
         elif isinstance(data_format, list):
-            self.name = list_type.List.get_name_from_format(data_format)
+            self.name = List.get_name_from_format(data_format)
         elif hasattr(data_format, "__name__"):
             self.name = data_format.__name__
         else:
@@ -83,12 +83,12 @@ class Array(Base):
         :returns: returns the string representation of the function
         :rtype: string
         """
-        from . import list_type
+        from .list_type import List
 
         if showname:
             array_name = "{}: "
             if isinstance(data_format, list):
-                array_name = array_name.format(list_type.List.get_name_from_format(data_format))
+                array_name = array_name.format(List.get_name_from_format(data_format))
             else:
                 array_name = array_name.format(data_format.__name__)
         else:
@@ -96,7 +96,7 @@ class Array(Base):
 
         if isinstance(data_format, list):
             return "{}[\n{}\n    ...\n]".format(array_name,
-                                                secsgem.common.indent_block(list_type.List.get_format(data_format), 4))
+                                                secsgem.common.indent_block(List.get_format(data_format), 4))
 
         return "{}[\n{}\n    ...\n]".format(array_name,
                                             secsgem.common.indent_block(data_format.get_format(not showname), 4))
@@ -142,9 +142,9 @@ class Array(Base):
         :param value: new value
         :type value: various
         """
-        from . import functions
+        from .functions import generate
 
-        new_object = functions.generate(self.item_decriptor)
+        new_object = generate(self.item_decriptor)
         new_object.set(data)
         self.data.append(new_object)
 
@@ -155,7 +155,7 @@ class Array(Base):
         :param value: new value
         :type value: list
         """
-        from . import functions
+        from .functions import generate
 
         if not isinstance(value, list):
             raise ValueError("Invalid value type {} for {}".format(type(value).__name__, self.__class__.__name__))
@@ -168,7 +168,7 @@ class Array(Base):
         self.data = []
 
         for item in value:
-            new_object = functions.generate(self.item_decriptor)
+            new_object = generate(self.item_decriptor)
             new_object.set(item)
             self.data.append(new_object)
 
@@ -210,7 +210,7 @@ class Array(Base):
         :returns: new start position
         :rtype: integer
         """
-        from . import functions
+        from .functions import generate
 
         (text_pos, _, length) = self.decode_item_header(data, start)
 
@@ -218,7 +218,7 @@ class Array(Base):
         self.data = []
 
         for _ in range(length):
-            new_object = functions.generate(self.item_decriptor)
+            new_object = generate(self.item_decriptor)
             text_pos = new_object.decode(data, text_pos)
             self.data.append(new_object)
 

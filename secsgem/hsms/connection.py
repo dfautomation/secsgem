@@ -84,6 +84,7 @@ class HsmsConnection(object):  # pragma: no cover
 
         # connection socket
         self.sock = None
+        self.lock = threading.Lock()
 
         # buffer for received data
         self.receiveBuffer = b""
@@ -178,34 +179,37 @@ class HsmsConnection(object):  # pragma: no cover
         :param packet: encoded data to be transmitted
         :type packet: string / byte array
         """
-        # encode the packet
-        data = packet.encode()
 
-        # split data into blocks
-        blocks = [data[i: i + self.send_block_size] for i in range(0, len(data), self.send_block_size)]
+        with self.lock:
+            # encode the packet
+            data = packet.encode()
 
-        for block in blocks:
-            retry = True
+            for i in range(0, len(data), self.send_block_size):
+                block = data[i: i + self.send_block_size]
+                retry = True
 
-            # not sent yet, retry
-            while retry:
-                # wait until socket is writable
-                while not select.select([], [self.sock], [], self.select_timeout)[1]:
-                    pass
+                # not sent yet, retry
+                while retry:
+                    try:
+                        # wait until socket is writable
+                        while not select.select([], [self.sock], [], self.select_timeout)[1]:
+                            pass
 
-                try:
-                    # send packet
-                    self.sock.send(block)
+                        # send packet
+                        self.sock.send(block)
 
-                    # retry will be cleared if send succeeded
-                    retry = False
-                except OSError as exc:
-                    if not secsgem.common.is_errorcode_ewouldblock(exc.errno):
-                        # raise if not EWOULDBLOCK
+                        # retry will be cleared if send succeeded
+                        retry = False
+                    except OSError as exc:
+                        if not secsgem.common.is_errorcode_ewouldblock(exc.errno):
+                            # raise if not EWOULDBLOCK
+                            return False
+                        # it is EWOULDBLOCK, so retry sending
+                    except Exception:
+                        self.logger.exception('error sending data to host.')
                         return False
-                    # it is EWOULDBLOCK, so retry sending
 
-        return True
+            return True
 
     def _process_receive_buffer(self):
         """
