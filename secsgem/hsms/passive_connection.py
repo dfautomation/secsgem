@@ -140,17 +140,20 @@ class HsmsPassiveConnection(HsmsConnection):  # pragma: no cover
                 # select timed out
                 continue
 
-            accept_result = self.serverSock.accept()
-            if accept_result is None:
+            try:
+                accept_result = self.serverSock.accept()
+                if accept_result is None:
+                    continue
+
+                (self.sock, (_, _)) = accept_result
+
+                # setup socket
+                self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+
+                # make socket nonblocking
+                self.sock.setblocking(0)
+            except Exception:  # pylint: disable=broad-except
                 continue
-
-            (self.sock, (_, _)) = accept_result
-
-            # setup socket
-            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
-
-            # make socket nonblocking
-            self.sock.setblocking(0)
 
             # start the receiver thread
             self._start_receiver()
